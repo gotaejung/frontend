@@ -78,9 +78,9 @@ function Header() {
       <div className="container mx-auto">
         <Link to="/" className="flex items-center gap-3">
           <img src="./logo.svg" alt="Logo" className="h-10 w-10" />
-          <h1 className="text-3xl text-yellow-300 font-bold">
+          {/* <h1 className="text-3xl text-yellow-300 font-bold">
             POPCORNPLAY
-          </h1>
+          </h1> */}
         </Link>
       </div>
     </header>
