@@ -95,7 +95,7 @@ function VideoHero() {
       <div className="absolute inset-0 bg-black/50"></div>
       <div className="relative z-10 flex-col flex items-center justify-center h-full">
         <h2 className="text-5xl md:text-7xl font-bold mb-6 text-yellow-300">
-          GOFLEX
+          POPCORN PLAY
         </h2>
         <p className="text-xl md:text-2xl mb-8 max-w-2xl">
           최신 영화와 인기 작품을 만나보세요.
