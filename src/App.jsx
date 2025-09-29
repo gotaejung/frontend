@@ -59,9 +59,12 @@ export default function App() {
           <Route path="/" element={
             <>
               <VideoHero />
-              <Section title="현재 상영작" items={nowPlaying} m_v={2} p_v={6}/>
-              <Section title="인기 상영작" items={popular} m_v={2} p_v={6}/>
-              <Section title="상영 예정작" items={upComing} m_v={2} p_v={6}/>
+              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6}/>
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6}/>
+              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6}/>
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={upComing} m_v={2} p_v={6}/>
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={upComing} m_v={2} p_v={6}/>
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={upComing} m_v={2} p_v={6}/>
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
