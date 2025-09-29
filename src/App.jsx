@@ -4,6 +4,11 @@ import { Route, Routes, Link } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 import Section from "./components/Section";
 import MovieDetail from "./components/MovieDetail";
@@ -59,9 +64,12 @@ export default function App() {
           <Route path="/" element={
             <>
               <VideoHero />
-              <Section title="현재 상영작" items={nowPlaying} m_v={2} p_v={6}/>
-              <Section title="인기 상영작" items={popular} m_v={2} p_v={6}/>
-              <Section title="상영 예정작" items={upComing} m_v={2} p_v={6}/>
+              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6}/>
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6}/>
+              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6}/>
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={upComing} m_v={2} p_v={6}/>
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={upComing} m_v={2} p_v={6}/>
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={upComing} m_v={2} p_v={6}/>
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
@@ -73,32 +81,110 @@ export default function App() {
 }
 
 function Header() {
-  return (
+    return (
     <header className="fixed top-0 left-0 w-full py-4 px-2 bg-black/90 z-50">
-      <div className="container mx-auto">
-        <Link to="/" className="flex items-center gap-3">
-          <img src="./logo.svg" alt="Logo" className="w-50" />
-        </Link>
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+          <Link to="/">
+            <img src="./logo.svg" alt="Logo" className="w-50" />
+          </Link>
+          
+          <nav className="hidden md:flex space-x-8 ml-8">
+            <Link to="/About" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+              About
+            </Link>
+            <Link to="/Movie" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+              Movie
+            </Link>
+            <Link to="/People" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+              People
+            </Link>
+            <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+              My page
+            </Link>
+          </nav>
+        </div>
+        
+        <div className="flex items-center space-x-6">
+          <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+            검색
+          </Link>
+          <Link to="/login" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+            로그인/회원가입
+          </Link>
+        </div>
       </div>
     </header>
   )
 }
 function VideoHero() {
+  const slides = [
+    {
+      title: "POPCORN PLAY",
+      subtitle: "최신 영화와 인기 작품을 만나보세요.",
+      buttonText: "지금 시작하기",
+      video: "video_popcornplay.mp4"
+    },
+    {
+      title: "액션 무비 월드",
+      subtitle: "스릴 넘치는 액션 영화의 세계로!",
+      buttonText: "액션 영화 보기",
+      image: "poster1.svg"
+    },
+    {
+      title: "로맨틱 시네마",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "로맨스 영화 보기",
+      image: "poster2.svg"
+    }
+  ];
+
   return (
     <section className="relative h-screen overflow-hidden">
-      <video autoPlay muted loop playsInline className='absolute top-0 left-0 w-full h-full object-cover'>
-        <source src='video_popcornplay.mp4' />
-      </video>
-      <div className="absolute inset-0 bg-black/50"></div>
-      <div className="relative z-10 flex-col flex items-center justify-center h-full">
-        <h2 className="text-5xl md:text-7xl font-bold mb-6 text-yellow-300">
-          GOFLEX
-        </h2>
-        <p className="text-xl md:text-2xl mb-8 max-w-2xl">
-          최신 영화와 인기 작품을 만나보세요.
-        </p>
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-4 rounded-lg text-lg font-bold transition-colors duration-300">지금 시작하기</button>
-      </div>
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        loop={true}
+        className="w-full h-full"
+      >
+        {slides.map((slide, index) => (
+          <SwiperSlide key={index}>
+            <div className="relative w-full h-full">
+              {slide.video ? (
+                <video 
+                  autoPlay 
+                  muted 
+                  loop 
+                  playsInline 
+                  className='absolute top-0 left-0 w-full h-full object-cover'
+                >
+                  <source src={slide.video} />
+                </video>
+              ) : (
+                <img 
+                  src={slide.image} 
+                  alt={slide.title}
+                  className='absolute top-0 left-0 w-full h-full object-cover'
+                />
+              )}
+              <div className="absolute inset-0 bg-black/50"></div>
+              <div className="relative z-10 flex-col flex items-center justify-center h-full">
+                <h2 className="text-5xl md:text-7xl font-bold mb-6 text-amber-100">
+                  {slide.title}
+                </h2>
+                <p className="text-xl md:text-2xl mb-8 max-w-2xl text-amber-100 text-center">
+                  {slide.subtitle}
+                </p>
+                <button className="bg-amber-100 hover:bg-amber-500 hover:text-white text-black px-8 py-4 rounded-lg text-lg font-bold transition-colors duration-300">
+                  {slide.buttonText}
+                </button>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </section>
   )
 }

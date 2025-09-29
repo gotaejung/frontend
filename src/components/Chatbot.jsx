@@ -52,7 +52,7 @@ export default function ChatBot() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-yellow-500 text-black rounded-full shadow-lg z-50 flex items-center justify-center hover:bg-yellow-600 transition-colors duration-300"
+        className="fixed bottom-6 right-6 w-16 h-16 bg-amber-100 text-black rounded-full shadow-lg z-50 flex items-center justify-center hover:bg-amber-500 transition-colors duration-300"
       >
         <FontAwesomeIcon icon={faHeadset} size="lg" />
       </button>
