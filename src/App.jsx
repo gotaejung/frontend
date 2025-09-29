@@ -76,9 +76,11 @@ function Header() {
   return (
     <header className="fixed top-0 left-0 w-full py-4 px-2 bg-black/90 z-50">
       <div className="container mx-auto">
-        <Link to="/">
+        <Link to="/" className="flex items-center gap-3">
+          <img src="./logo.svg" alt="Logo" className="h-10 w-10" />
           <h1 className="text-3xl text-yellow-300 font-bold">
-            <FontAwesomeIcon icon={faHouse} />GOFLIX</h1>
+            POPCORNPLAY
+          </h1>
         </Link>
       </div>
     </header>
@@ -88,7 +90,7 @@ function VideoHero() {
   return (
     <section className="relative h-screen overflow-hidden">
       <video autoPlay muted loop playsInline className='absolute top-0 left-0 w-full h-full object-cover'>
-        <source src='video.mp4' />
+        <source src='video_popcornplay.mp4' />
       </video>
       <div className="absolute inset-0 bg-black/50"></div>
       <div className="relative z-10 flex-col flex items-center justify-center h-full">
