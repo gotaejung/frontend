@@ -87,12 +87,12 @@ export default function App() {
             <>
               <VideoHero />
               <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
-              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} orientation="horizontal" />
               <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
-              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
               <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
