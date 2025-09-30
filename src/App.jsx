@@ -13,7 +13,8 @@ import 'swiper/css/pagination';
 import Section from "./components/Section";
 import MovieDetail from "./components/MovieDetail";
 import Chatbot from "./components/Chatbot";
-
+import SearchPage from "./components/SearchPage";
+import MyPage from "./components/MyPage";
 
 
 
@@ -95,6 +96,8 @@ export default function App() {
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
+          <Route path='/search' element={<SearchPage />} />
+          <Route path='/My Page' element={<MyPage />} />
         </Routes>
       </main>
       <Chatbot />
@@ -111,7 +114,7 @@ function Header() {
             <img src="./logo.svg" alt="Logo" className="w-50" />
           </Link>
 
-          <nav className="hidden md:flex space-x-8 ml-8">
+          {/* <nav className="hidden md:flex space-x-8 ml-8">
             <Link to="/About" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
               About
             </Link>
@@ -121,15 +124,15 @@ function Header() {
             <Link to="/People" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
               People
             </Link>
-            <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
-              My page
-            </Link>
-          </nav>
+          </nav> */}
         </div>
 
         <div className="flex items-center space-x-6">
           <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
             검색
+          </Link>
+          <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+            My page
           </Link>
           <Link to="/login" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
             로그인/회원가입
