@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import axios from 'axios';
 
 export default function SearchPage() {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [personResults, setPersonResults] = useState([]);
@@ -95,7 +96,7 @@ export default function SearchPage() {
       const response = await axios.get(
         `https://api.themoviedb.org/3/search/multi?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=ko-KR&page=1&include_adult=${adultContent}`
       );
-      
+
       // 결과를 타입별로 분류
       const results = response.data.results;
       setSearchResults(results.filter(item => item.media_type === 'movie' && item.poster_path));
@@ -197,7 +198,7 @@ export default function SearchPage() {
     setLoading(true);
     try {
       let url = `https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&page=1&sort_by=${sortBy}&include_adult=${adultContent}&region=${selectedRegion}`;
-      
+
       if (selectedGenre) url += `&with_genres=${selectedGenre}`;
       if (selectedYear) url += `&year=${selectedYear}`;
       if (minRating) url += `&vote_average.gte=${minRating}`;
@@ -217,7 +218,7 @@ export default function SearchPage() {
     setLoading(true);
     try {
       let url;
-      
+
       if (query.trim()) {
         url = `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=ko-KR&page=1&include_adult=${adultContent}&region=${selectedRegion}`;
         if (selectedYear) url += `&year=${selectedYear}`;
@@ -230,7 +231,7 @@ export default function SearchPage() {
 
       // 필터링 적용
       if (selectedGenre) {
-        results = results.filter(movie => 
+        results = results.filter(movie =>
           movie.genre_ids && movie.genre_ids.includes(parseInt(selectedGenre))
         );
       }
@@ -270,10 +271,10 @@ export default function SearchPage() {
 
   const sortResults = (results, sortBy) => {
     const [field, order] = sortBy.split('.');
-    
+
     return [...results].sort((a, b) => {
       let aValue, bValue;
-      
+
       switch (field) {
         case 'popularity':
           aValue = a.popularity || 0;
@@ -298,7 +299,7 @@ export default function SearchPage() {
         default:
           return 0;
       }
-      
+
       if (order === 'desc') {
         return bValue > aValue ? 1 : -1;
       } else {
@@ -307,6 +308,39 @@ export default function SearchPage() {
     });
   };
 
+  // URL 쿼리/내비게이션 state에서 초기 검색어/타입 반영
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q =
+      params.get('q') ||
+      params.get('keyword') ||
+      params.get('personName') ||
+      (location.state && location.state.q) ||
+      '';
+
+    const hint =
+      params.get('type') ||
+      params.get('tab') ||
+      params.get('role') ||
+      (location.state && location.state.type) ||
+      '';
+
+    if (q) setSearchQuery(q);
+
+    if (hint) {
+      const mapped =
+        hint === 'person' || hint === 'people' || hint === 'cast' || hint === 'director'
+          ? 'person'
+          : hint === 'movie'
+          ? 'movie'
+          : hint === 'multi'
+          ? 'multi'
+          : searchType;
+      if (mapped !== searchType) setSearchType(mapped);
+    }
+  }, [location.search, location.state]);
+
+  // ▼ 디바운스된 자동 검색 효과 (300ms)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       switch (searchType) {
@@ -353,18 +387,17 @@ export default function SearchPage() {
       <div className="container mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-6 text-amber-100">고급 검색</h1>
-          
+
           {/* 검색 타입 선택 */}
           <div className="grid grid-cols-3 md:grid-cols-7 gap-2 mb-6">
             {searchTypes.map((type) => (
               <button
                 key={type.value}
                 onClick={() => setSearchType(type.value)}
-                className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${
-                  searchType === type.value 
-                    ? 'bg-amber-500 text-black' 
-                    : 'bg-gray-800 text-white hover:bg-gray-700'
-                }`}
+                className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${searchType === type.value
+                  ? 'bg-amber-500 text-black'
+                  : 'bg-gray-800 text-white hover:bg-gray-700'
+                  }`}
               >
                 <span className="block text-lg">{type.icon}</span>
                 <span className="text-xs">{type.label}</span>

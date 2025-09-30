@@ -1,9 +1,10 @@
 import api from "../api/axios";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 
 export default function MovieDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(null)
   const [credits, setCredits] = useState(null)
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
@@ -13,7 +14,21 @@ export default function MovieDetail() {
   const [showSimilar, setShowSimilar] = useState(false);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const [similarError, setSimilarError] = useState(null);
-  
+
+  /* ▼ 추가: TMDB 리뷰 상태 */
+  const [reviews, setReviews] = useState([]);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [reviewsError, setReviewsError] = useState(null);
+
+  // ▼ 리뷰 펼치기 상태
+  const [expandedReview, setExpandedReview] = useState({});
+  const toggleReview = (id) =>
+    setExpandedReview(prev => ({ ...prev, [id]: !prev[id] }));
+
+  // ▼ 출연진 전체 보기 모달 상태
+  const [isCastOpen, setIsCastOpen] = useState(false);
+
   useEffect(() => {
     async function getMovieDetails() {
       try {
@@ -30,7 +45,12 @@ export default function MovieDetail() {
     setSimilar([]);
     setSimilarError(null);
 
-    getMovieDetails()
+    setReviews([]);
+    setReviewsTotal(0);
+    setReviewsError(null);
+    setLoadingReviews(false);
+
+    getMovieDetails();
   }, [id])/* 의존성배열의 값이 바꿀때  실행 */
 
   // ▼ 추가: 하단 영역 토글/데이터 로드 (페이지 이동 없음)
@@ -47,16 +67,52 @@ export default function MovieDetail() {
       setLoadingSimilar(false);
     }
   };
-  const openReviews = () => setShowSimilar(false);
+  /* ▼ 수정: 리뷰 열기 시 TMDB에서 리뷰 로드 */
+  const openReviews = async () => {
+    setShowSimilar(false);
+    if (reviews.length || loadingReviews) return; // 이미 로드함
+    setLoadingReviews(true);
+    try {
+      const res = await api.get(`${id}/reviews?language=ko-KR&page=1`);
+      let data = res.data;
+      // 한국어 없으면 영어 대체
+      if (!Array.isArray(data?.results) || data.results.length === 0) {
+        const en = await api.get(`${id}/reviews?language=en-US&page=1`);
+        data = en.data;
+      }
+      setReviews(Array.isArray(data?.results) ? data.results : []);
+      setReviewsTotal(typeof data?.total_results === 'number' ? data.total_results : (data?.results?.length || 0));
+    } catch (e) {
+      setReviewsError('리뷰를 불러오지 못했습니다.');
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
 
-  if (!movie || !credits) {
-    return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>
-  }
+  /* ▼ 리뷰 탭이 기본이므로 처음 진입 및 "유사한 영화" → "리뷰" 전환 시 자동 로드 */
+  useEffect(() => {
+    if (!showSimilar && reviews.length === 0 && !loadingReviews) {
+      openReviews();
+    }
+  }, [id, showSimilar]);
 
   // 감독 찾기 (안전 가드)
   const director = Array.isArray(credits?.crew)
     ? credits.crew.find(person => person.job === 'Director')
     : null;
+
+  // 캐스트 정렬/헬퍼
+  const castList = Array.isArray(credits?.cast) ? [...credits.cast].sort((a,b) => (a.order ?? 999) - (b.order ?? 999)) : [];
+  const getProfileUrl = (p) => (p ? `https://image.tmdb.org/t/p/w185${p}` : null);
+
+  // ▼ 검색 필터 페이지 이동 헬퍼
+  const goToFilterByPerson = (person, role) => {
+    if (!person) return;
+    const params = new URLSearchParams({
+      q: person.name ?? '' // 통합검색 쿼리로 인물명 전달
+    });
+    navigate(`/search?${params.toString()}`);
+  };
 
   // 안전 포맷터
   const safeAvg = (v) => (typeof v === 'number' ? v.toFixed(1) : '0.0');
@@ -78,6 +134,41 @@ export default function MovieDetail() {
       <span key={i} className={i < filled ? 'text-yellow-400' : 'text-gray-500'}>★</span>
     ));
   };
+
+  /* ▼ 리뷰 카드 유틸 */
+  const getAvatarUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('/https')) return path.slice(1);
+    if (path.startsWith('/')) return `https://image.tmdb.org/t/p/w185${path}`;
+    return path;
+  };
+  const renderReviewStars = (rating) => {
+    const v = typeof rating === 'number' ? rating : 0;         // 0~10
+    const filled = Math.round((v / 10) * 5);                   // 0~5
+    return Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={i < filled ? 'text-yellow-400' : 'text-gray-500'}>★</span>
+    ));
+  };
+  const formatDate = (iso) => {
+    try {
+      return new Date(iso).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch { return '-'; }
+  };
+  const formatUpdated = (iso) => {
+    if (!iso) return null;
+    try {
+      return new Date(iso).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch { return null; }
+  };
+
+  // ▼ 추가: 데이터 로딩 가드 (초기 null 접근 방지)
+  if (!movie || !credits) {
+    return (
+      <div className="min-h-screen bg-gray-800 text-white flex items-center justify-center">
+        불러오는 중...
+      </div>
+    );
+  }
 
   //영화상세정보
   return (
@@ -128,14 +219,46 @@ export default function MovieDetail() {
                 <div className="space-y-3 mb-6">
                   <div className="flex">
                     <span className="text-gray-400 font-medium w-16">감독</span>
-                    <span className="text-white">{director ? director.name : '정보 없음'}</span>
+                    <span className="text-white">
+                      {director ? (
+                        <button
+                          type="button"
+                          onClick={() => goToFilterByPerson(director, 'director')}
+                          className="text-white hover:underline"
+                          title={`${director.name} 검색`}
+                        >
+                          {director.name}
+                        </button>
+                      ) : '정보 없음'}
+                    </span>
                   </div>
-                  <div className="flex">
+                  <div className="flex items-start gap-2">
                     <span className="text-gray-400 font-medium w-16">출연진</span>
                     <span className="text-white">
-                      {(Array.isArray(credits?.cast) ? credits.cast.slice(0, 3) : [])
-                        .map(actor => actor.name).join(', ')}...
+                      {castList.slice(0, 3).map((actor, idx) => (
+                        <span key={actor.id}>
+                          <button
+                            type="button"
+                            onClick={() => goToFilterByPerson(actor, 'cast')}
+                            className="text-white hover:underline"
+                            title={`${actor.name} 검색`}
+                          >
+                            {actor.name}
+                          </button>
+                          {idx < Math.min(3, castList.length) - 1 ? ', ' : ''}
+                        </span>
+                      ))}
+                      {castList.length > 3 && ' ...'}
                     </span>
+                    {castList.length > 3 && (
+                      <button
+                        type="button"
+                        onClick={() => setIsCastOpen(true)}
+                        className="text-white hover:underline text-sm ml-2"
+                      >
+                        더보기
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -183,7 +306,7 @@ export default function MovieDetail() {
           {/* Desktop: Full-width Reviews (전체 너비) */}
           <div className="mt-12">
             <div className="border-t border-gray-600 pt-6">
-              {/* 헤더: 리뷰 | 유사한 영화 추천 (동일 강조, 토글) */}
+              {/* 헤더: 리뷰 | 유사한 영화 추천 */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <button
@@ -193,7 +316,7 @@ export default function MovieDetail() {
                   >
                     리뷰
                   </button>
-                  <span className="text-blue-400">(135)</span>
+                  <span className="text-blue-400">({reviewsTotal})</span>
                 </div>
                 <button
                   type="button"
@@ -204,7 +327,7 @@ export default function MovieDetail() {
                 </button>
               </div>
 
-              {/* 내용: 유사영화 or 기존 리뷰 */}
+              {/* 내용: 유사영화 or TMDB 리뷰 목록 */}
               {showSimilar ? (
                 <div className="mb-6">
                   {loadingSimilar && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
@@ -246,60 +369,84 @@ export default function MovieDetail() {
                 </div>
               ) : (
                 <>
-                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
-                    <p className="text-gray-300 text-sm text-center">
-                      리뷰를 작성하려면 영화를 충분히 감상해주세요
-                    </p>
-                    <p className="text-gray-400 text-xs text-center mt-1">
-                      작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-4 mb-6">
-                    <div className="flex text-yellow-400 text-xl">
-                      {[...Array(5)].map((_, i) => (<span key={i}>⭐</span>))}
+                  {loadingReviews && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
+                  {reviewsError && <div className="text-red-400 text-center py-6">{reviewsError}</div>}
+                  {!loadingReviews && !reviewsError && reviews.length === 0 && (
+                    <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                      <p className="text-gray-300 text-sm text-center">
+                        리뷰를 작성하려면 영화를 충분히 감상해주세요
+                      </p>
+                      <p className="text-gray-400 text-xs text-center mt-1">
+                        작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
+                      </p>
                     </div>
-                    <span className="text-gray-300">135개의 평점</span>
-                    <span className="text-white text-xl font-bold">4.5</span>
-                  </div>
+                  )}
 
-                  <div className="flex justify-end mb-4">
-                    <span className="text-gray-400 text-sm">베스트순 ▼</span>
-                  </div>
-
-                  <div className="border-b border-gray-600 pb-4">
-                    {/* 기존 샘플 리뷰 블록 */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg">👤</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="flex text-yellow-400">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i}>⭐</span>
-                            ))}
+                  {!loadingReviews && !reviewsError && reviews.length > 0 && (
+                    <div className="space-y-6">
+                      {reviews.map(r => {
+                        const isOpen = !!expandedReview[r.id];
+                        return (
+                          <div key={r.id} className="border-b border-gray-600 pb-4">
+                            <div className="flex items-start gap-3">
+                              <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                                {getAvatarUrl(r?.author_details?.avatar_path) ? (
+                                  <img src={getAvatarUrl(r.author_details.avatar_path)} alt={r.author} className="w-full h-full object-cover" />
+                                ) : (<span className="text-lg">👤</span>)}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <div className="flex text-yellow-400 text-sm">
+                                    {renderReviewStars(r?.author_details?.rating)}
+                                  </div>
+                                  {r?.author_details?.rating != null && (
+                                    <span className="text-blue-400 text-sm font-semibold">
+                                      {safeAvg(r.author_details.rating)}/10
+                                    </span>
+                                  )}
+                                  <span className="text-white font-medium">{r?.author || '익명'}</span>
+                                  <span className="text-gray-400 text-sm">{formatDate(r?.created_at)}</span>
+                                  {formatUpdated(r?.updated_at) && (
+                                    <span className="text-gray-500 text-xs">(수정: {formatUpdated(r.updated_at)})</span>
+                                  )}
+                                </div>
+                                <p
+                                  className="text-gray-300 leading-relaxed whitespace-pre-line"
+                                  style={isOpen ? undefined : {
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 4,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden'
+                                  }}
+                                >
+                                  {r?.content}
+                                </p>
+                                <div className="mt-2 flex items-center gap-4">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleReview(r.id)}
+                                    className="text-gray-400 hover:text-white text-sm"
+                                  >
+                                    {isOpen ? '접기' : '더보기'}
+                                  </button>
+                                  {r?.url && (
+                                    <a
+                                      href={r.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-400 hover:underline text-sm"
+                                    >
+                                      원문 보기
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-white font-medium">민선덕</span>
-                          <span className="text-gray-400 text-sm">2024년 9월 23일</span>
-                        </div>
-                        <p className="text-gray-300 leading-relaxed mb-3">
-                          이 영화는 어른들을 위한 동화같아요 영화관에서 아이들과 함께봤다가 
-                          아이들이 다 울어서 난감했어요 그런데 영화가 자꾸 생각나고 다시 
-                          고민되고 그렇 좋아하면 재혀요
-                        </p>
-                        <div className="flex items-center gap-4">
-                          <button className="flex items-center gap-1 text-gray-400 hover:text-white">
-                            <span>👍</span>
-                            <span>135</span>
-                          </button>
-                          <button className="text-gray-400 hover:text-white">
-                            <span>👎</span>
-                          </button>
-                        </div>
-                      </div>
+                        );
+                      })}
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </div>
@@ -378,15 +525,47 @@ export default function MovieDetail() {
             <div className="flex justify-between items-center">
               <span className="text-gray-400 font-medium text-sm">감독</span>
               <span className="text-white text-sm text-right flex-1 ml-4">
-                {director?.name ?? '정보 없음'}
+                {director ? (
+                  <button
+                    type="button"
+                    onClick={() => goToFilterByPerson(director, 'director')}
+                    className="text-white hover:underline"
+                    title={`${director.name} 검색`}
+                  >
+                    {director.name}
+                  </button>
+                ) : '정보 없음'}
               </span>
             </div>
             <div className="flex justify-between items-start">
               <span className="text-gray-400 font-medium text-sm">출연진</span>
-              <span className="text-white text-sm text-right flex-1 ml-4 leading-relaxed">
-                {(Array.isArray(credits?.cast) ? credits.cast.slice(0, 3) : [])
-                  .map(actor => actor.name).join(', ')}...
-              </span>
+              <div className="text-right flex-1 ml-4">
+                <span className="text-white text-sm leading-relaxed">
+                  {castList.slice(0, 3).map((a, idx) => (
+                    <span key={a.id}>
+                      <button
+                        type="button"
+                        onClick={() => goToFilterByPerson(a, 'cast')}
+                        className="text-white hover:underline"
+                        title={`${a.name} 검색`}
+                      >
+                        {a.name}
+                      </button>
+                      {idx < Math.min(3, castList.length) - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                  {castList.length > 3 && ' ...'}
+                </span>
+                {castList.length > 3 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsCastOpen(true)}
+                    className="ml-2 text-white hover:underline text-xs align-middle"
+                  >
+                    더보기
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -408,7 +587,7 @@ export default function MovieDetail() {
                 >
                   리뷰
                 </button>
-                <span className="text-blue-400 text-sm">(135)</span>
+                <span className="text-blue-400 text-sm">({reviewsTotal})</span>
               </div>
               <button
                 type="button"
@@ -460,68 +639,146 @@ export default function MovieDetail() {
               </div>
             ) : (
               <>
-                {/* 기존 모바일 리뷰 UI */}
-                <div className="bg-gray-700 rounded-lg p-4 mb-6">
-                  <p className="text-gray-300 text-sm text-center leading-relaxed">
-                    리뷰를 작성하려면 영화를 충분히 감상해주세요
-                  </p>
-                  <p className="text-gray-400 text-xs text-center mt-1">
-                    작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-center gap-4 mb-6">
-                  <div className="flex text-yellow-400 text-xl">
-                    {[...Array(5)].map((_, i) => (<span key={i}>⭐</span>))}
+                {loadingReviews && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
+                {reviewsError && <div className="text-red-400 text-center py-6">{reviewsError}</div>}
+                {!loadingReviews && !reviewsError && reviews.length === 0 && (
+                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                    <p className="text-gray-300 text-sm text-center">
+                      리뷰를 작성하려면 영화를 충분히 감상해주세요
+                    </p>
+                    <p className="text-gray-400 text-xs text-center mt-1">
+                      작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
+                    </p>
                   </div>
-                  <span className="text-gray-300 text-sm">135개의 평점</span>
-                  <span className="text-white text-xl font-bold">4.5</span>
-                </div>
+                )}
 
-                <div className="flex justify-end mb-4">
-                  <span className="text-gray-400 text-sm">베스트순 ▼</span>
-                </div>
-
-                <div className="border-b border-gray-600 pb-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm">👤</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex text-yellow-400 text-xs">
-                          {[...Array(5)].map((_, i) => (
-                            <span key={i}>⭐</span>
-                          ))}
+                {!loadingReviews && !reviewsError && reviews.length > 0 && (
+                  <div className="space-y-6">
+                    {reviews.map(r => {
+                      const isOpen = !!expandedReview[r.id];
+                      return (
+                        <div key={r.id} className="border-b border-gray-600 pb-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                              {getAvatarUrl(r?.author_details?.avatar_path) ? (
+                                <img src={getAvatarUrl(r.author_details.avatar_path)} alt={r.author} className="w-full h-full object-cover" />
+                              ) : (<span className="text-sm">👤</span>)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <div className="flex text-xs text-yellow-400">
+                                  {renderReviewStars(r?.author_details?.rating)}
+                                </div>
+                                {r?.author_details?.rating != null && (
+                                  <span className="text-blue-400 text-xs font-semibold">
+                                    {safeAvg(r.author_details.rating)}/10
+                                  </span>
+                                )}
+                                <span className="text-white text-sm font-medium">{r?.author || '익명'}</span>
+                                <span className="text-gray-400 text-xs">{formatDate(r?.created_at)}</span>
+                                {formatUpdated(r?.updated_at) && (
+                                  <span className="text-gray-500 text-[11px]">(수정: {formatUpdated(r.updated_at)})</span>
+                                )}
+                              </div>
+                              <p
+                                className="text-gray-300 text-sm leading-relaxed whitespace-pre-line"
+                                style={isOpen ? undefined : {
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 4,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                {r?.content}
+                              </p>
+                              <div className="mt-2 flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleReview(r.id)}
+                                  className="text-gray-400 hover:text-white text-xs"
+                                >
+                                  {isOpen ? '접기' : '더보기'}
+                                </button>
+                                {r?.url && (
+                                  <a
+                                    href={r.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:underline text-xs"
+                                  >
+                                    원문 보기
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <span className="text-white text-sm font-medium">민선덕</span>
-                        <span className="text-gray-400 text-xs">2025년 9월 23일</span>
-                      </div>
-                      <p className="text-gray-300 text-sm leading-relaxed mb-3">
-                        이 영화는 어른들을 위한 동화같아요 영화관에서 아이들과 함께봤다가 
-                        아이들이 다 울어서 난감했어요 그런데 영화가 자꾸 생각나고 다시 
-                        고민되고 그렇 좋아하면 재혀요 간만한 영화에서 이렇게 복잡한 해요
-                      </p>
-                      <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-1 text-gray-400 text-sm hover:text-white">
-                          <span>👍</span>
-                          <span>135</span>
-                        </button>
-                        <button className="text-gray-400 text-sm hover:text-white">
-                          <span>👎</span>
-                        </button>
-                      </div>
-                    </div>
+                      );
+                    })}
                   </div>
-                </div>
+                )}
+                <div className="pb-20"></div>
               </>
             )}
-
-            <div className="pb-20"></div>
           </div>
         </div>
       </div>
+
+      {/* 출연진 전체 보기 모달 */}
+      {isCastOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" aria-modal="true" role="dialog">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setIsCastOpen(false)} />
+          <div className="relative bg-gray-800 text-white w-[92vw] max-w-3xl rounded-lg shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h2 className="text-lg font-bold">
+                출연진 전체 <span className="text-blue-400">({castList.length})</span>
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsCastOpen(false)}
+                className="text-gray-300 hover:text-white text-xl leading-none"
+                aria-label="닫기"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4 max-h-[70vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {castList.map(c => (
+                  <div key={c.cast_id ?? `${c.id}-${c.order}`} className="flex items-center gap-3 bg-gray-900/50 border border-gray-700 rounded-md p-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center flex-shrink-0">
+                      {getProfileUrl(c.profile_path) ? (
+                        <img
+                          src={getProfileUrl(c.profile_path)}
+                          alt={c.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="text-lg">👤</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCastOpen(false);
+                          goToFilterByPerson(c, 'cast');
+                        }}
+                        className="text-left text-sm text-white hover:underline truncate"
+                        title={`${c.name} 검색`}
+                      >
+                        {c.name}
+                      </button>
+                      <p className="text-xs text-gray-400 truncate">{c.character || '배역 정보 없음'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
-
 }
