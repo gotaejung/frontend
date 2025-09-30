@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMagnifyingGlass,
+  faFilm,
+  faUsers,
+  faFolder,
+  faBuilding,
+  faTag,
+  // faTv, // TV 사용 시 주석 해제
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function SearchPage() {
   const location = useLocation();
@@ -20,15 +30,15 @@ export default function SearchPage() {
   const [selectedRegion, setSelectedRegion] = useState('KR');
   const [adultContent, setAdultContent] = useState(false);
 
-  // 검색 타입 옵션
+  // 검색 타입 옵션 (Font Awesome 사용)
   const searchTypes = [
-    { value: 'multi', label: '통합 검색', icon: '🔍' },
-    { value: 'movie', label: '영화', icon: '🎬' },
-    /* { value: 'tv', label: 'TV 시리즈', icon: '📺' }, */
-    { value: 'person', label: '인물', icon: '👥' },
-    { value: 'collection', label: '컬렉션', icon: '📚' },
-    { value: 'company', label: '제작사', icon: '🏢' },
-    { value: 'keyword', label: '키워드', icon: '🏷️' }
+    { value: 'multi', label: '통합 검색', icon: faMagnifyingGlass },
+    { value: 'movie', label: '영화', icon: faFilm },
+    /* { value: 'tv', label: 'TV 시리즈', icon: faTv }, */
+    { value: 'person', label: '인물', icon: faUsers },
+    { value: 'collection', label: '컬렉션', icon: faFolder },
+    { value: 'company', label: '제작사', icon: faBuilding },
+    { value: 'keyword', label: '키워드', icon: faTag },
   ];
 
   // 장르 목록 (기존과 동일)
@@ -308,7 +318,6 @@ export default function SearchPage() {
     });
   };
 
-  // URL 쿼리/내비게이션 state에서 초기 검색어/타입 반영
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const q =
@@ -317,7 +326,6 @@ export default function SearchPage() {
       params.get('personName') ||
       (location.state && location.state.q) ||
       '';
-
     const hint =
       params.get('type') ||
       params.get('tab') ||
@@ -325,23 +333,8 @@ export default function SearchPage() {
       (location.state && location.state.type) ||
       '';
 
-    if (q) setSearchQuery(q);
-
-    if (hint) {
-      const mapped =
-        hint === 'person' || hint === 'people' || hint === 'cast' || hint === 'director'
-          ? 'person'
-          : hint === 'movie'
-          ? 'movie'
-          : hint === 'multi'
-          ? 'multi'
-          : searchType;
-      if (mapped !== searchType) setSearchType(mapped);
-    }
-  }, [location.search, location.state]);
-
-  // ▼ 디바운스된 자동 검색 효과 (300ms)
-  useEffect(() => {
+      if (q) setSearchQuery(q);
+      
     const timeoutId = setTimeout(() => {
       switch (searchType) {
         case 'multi':
@@ -394,12 +387,15 @@ export default function SearchPage() {
               <button
                 key={type.value}
                 onClick={() => setSearchType(type.value)}
-                className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${searchType === type.value
-                  ? 'bg-amber-500 text-black'
-                  : 'bg-gray-800 text-white hover:bg-gray-700'
-                  }`}
+                className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${
+                  searchType === type.value
+                    ? 'bg-amber-500 text-black'
+                    : 'bg-gray-800 text-white hover:bg-gray-700'
+                }`}
               >
-                <span className="block text-lg">{type.icon}</span>
+                <span className="block text-lg">
+                  <FontAwesomeIcon icon={type.icon} />
+                </span>
                 <span className="text-xs">{type.label}</span>
               </button>
             ))}
@@ -575,7 +571,8 @@ export default function SearchPage() {
         )}
 
         {/* TV 시리즈 검색 결과 */}
-        {/* {(searchType === 'tv' || searchType === 'multi') && tvResults.length > 0 && (
+        {/*
+        {(searchType === 'tv' || searchType === 'multi') && tvResults.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-amber-100">
               📺 TV 시리즈 ({tvResults.length}개)
@@ -608,124 +605,140 @@ export default function SearchPage() {
               ))}
             </div>
           </div>
-        )} */}
+        )}
+        */}
 
         {/* 인물 검색 결과 */}
         {(searchType === 'person' || searchType === 'multi') && personResults.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-amber-100">
-              👥 인물 ({personResults.length}개)
+              👤 인물 ({personResults.length}명)
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {personResults.map((person) => (
-                <div key={person.id} className="group cursor-pointer">
-                  <div className="relative overflow-hidden rounded-lg shadow-lg">
-                    <img
-                      src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
-                      alt={person.name}
-                      className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300"></div>
+                <Link key={person.id} to={`/person/${person.id}`}>
+                  <div className="group cursor-pointer">
+                    <div className="relative overflow-hidden rounded-lg shadow-lg">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
+                        alt={person.name}
+                        className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300"></div>
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-xs text-amber-300">
+                          ⭐ {person.popularity?.toFixed(1) || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <h3 className="text-sm font-medium line-clamp-2 group-hover:text-amber-300 transition-colors">
+                        {person.name}
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {person.known_for_department}
+                      </p>
+                    </div>
                   </div>
-                  <div className="mt-2">
-                    <h3 className="text-sm font-medium line-clamp-2 group-hover:text-amber-300 transition-colors">
-                      {person.name}
-                    </h3>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {person.known_for_department || '배우'}
-                    </p>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
         )}
 
         {/* 컬렉션 검색 결과 */}
-        {searchType === 'collection' && collectionResults.length > 0 && (
+        {(searchType === 'collection' || searchType === 'multi') && collectionResults.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-amber-100">
-              📚 컬렉션 ({collectionResults.length}개)
+              📦 컬렉션 ({collectionResults.length}개)
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {collectionResults.map((collection) => (
-                <div key={collection.id} className="group cursor-pointer bg-gray-900 rounded-lg p-4">
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={`https://image.tmdb.org/t/p/w200${collection.poster_path}`}
-                      alt={collection.name}
-                      className="w-16 h-24 object-cover rounded"
-                    />
-                    <div>
-                      <h3 className="font-medium group-hover:text-amber-300 transition-colors">
+                <Link key={collection.id} to={`/collection/${collection.id}`}>
+                  <div className="group cursor-pointer">
+                    <div className="relative overflow-hidden rounded-lg shadow-lg">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${collection.poster_path}`}
+                        alt={collection.name}
+                        className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300"></div>
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-xs text-amber-300">
+                          ⭐ {collection.vote_average?.toFixed(1) || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <h3 className="text-sm font-medium line-clamp-2 group-hover:text-amber-300 transition-colors">
                         {collection.name}
                       </h3>
-                      <p className="text-sm text-gray-400 mt-1">
-                        {collection.overview?.slice(0, 100)}...
+                      <p className="text-xs text-gray-400 mt-1">
+                        {collection.release_date ? new Date(collection.release_date).getFullYear() : 'N/A'}
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
         )}
 
         {/* 제작사 검색 결과 */}
-        {searchType === 'company' && companyResults.length > 0 && (
+        {(searchType === 'company' || searchType === 'multi') && companyResults.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-amber-100">
-              🏢 제작사 ({companyResults.length}개)
+              🎬 제작사 ({companyResults.length}개)
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {companyResults.map((company) => (
-                <div key={company.id} className="group cursor-pointer bg-gray-900 rounded-lg p-4 text-center">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
-                    alt={company.name}
-                    className="w-full h-16 object-contain mb-2"
-                  />
-                  <h3 className="text-sm font-medium group-hover:text-amber-300 transition-colors">
-                    {company.name}
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {company.origin_country}
-                  </p>
-                </div>
+                <Link key={company.id} to={`/company/${company.id}`}>
+                  <div className="group cursor-pointer">
+                    <div className="relative overflow-hidden rounded-lg shadow-lg">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
+                        alt={company.name}
+                        className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300"></div>
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-xs text-amber-300">
+                          ⭐ {company.popularity?.toFixed(1) || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <h3 className="text-sm font-medium line-clamp-2 group-hover:text-amber-300 transition-colors">
+                        {company.name}
+                      </h3>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
         )}
 
         {/* 키워드 검색 결과 */}
-        {searchType === 'keyword' && keywordResults.length > 0 && (
+        {(searchType === 'keyword' || searchType === 'multi') && keywordResults.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-amber-100">
-              🏷️ 키워드 ({keywordResults.length}개)
+              🔑 키워드 ({keywordResults.length}개)
             </h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {keywordResults.map((keyword) => (
-                <span
-                  key={keyword.id}
-                  className="px-3 py-1 bg-amber-500 text-black rounded-full text-sm cursor-pointer hover:bg-amber-400 transition-colors"
-                >
-                  {keyword.name}
-                </span>
+                <div key={keyword.id} className="bg-gray-800 p-4 rounded-lg shadow-md">
+                  <p className="text-sm text-amber-100">{keyword.name}</p>
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* 검색 결과 없음/초기 상태 */}
-        {!loading && !searchQuery && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold mb-2 text-amber-100">
-              {searchTypes.find(t => t.value === searchType)?.label} 검색
-            </h3>
-            <p className="text-gray-400">
-              검색어를 입력하거나 고급 필터를 사용해보세요
-            </p>
+        {/* 결과가 없을 경우 메시지 */}
+        {(searchResults.length === 0 && personResults.length === 0 && tvResults.length === 0 && collectionResults.length === 0 && companyResults.length === 0 && keywordResults.length === 0) && (
+          <div className="text-center py-8">
+            <p className="text-gray-400">검색 결과가 없습니다.</p>
           </div>
         )}
       </div>

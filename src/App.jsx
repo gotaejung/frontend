@@ -1,8 +1,17 @@
 import axios from 'axios';
 import api from "./api/axios";
-import { Route, Routes, Link } from "react-router";
+import { Route, Routes, Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHouse,
+  faMagnifyingGlass,
+  faFilm,
+  faUsers,
+  faFolder,
+  faBuilding,
+  faTag,
+  // faTv, // TV 사용 시 주석 해제
+} from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -26,7 +35,18 @@ export default function App() {
   const [comedyMovies, setComedyMovies] = useState([]);
   const [actionMovies, setActionMovies] = useState([]);
   const [romanceMovies, setRomanceMovies] = useState([]);
+  const navigate = useNavigate();
+  const [selectedType, setSelectedType] = useState('multi');
 
+  const searchTypes = [
+    { value: 'multi', label: '통합 검색', icon: faMagnifyingGlass },
+    { value: 'movie', label: '영화', icon: faFilm },
+    /* { value: 'tv', label: 'TV 시리즈', icon: faTv }, */
+    { value: 'person', label: '인물', icon: faUsers },
+    { value: 'collection', label: '컬렉션', icon: faFolder },
+    { value: 'company', label: '제작사', icon: faBuilding },
+    { value: 'keyword', label: '키워드', icon: faTag },
+  ];
 
   useEffect(() => {
     async function loadNowPlaying() {
@@ -86,7 +106,40 @@ export default function App() {
           <Route path="/" element={
             <>
               <VideoHero />
-              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
+              {/* 검색 타입 그리드 + 검색 인풋 */}
+              <div className="container mx-auto px-4 py-6">
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
+                  {searchTypes.map((type) => (
+                    <button
+                      key={type.value}
+                      onClick={() => {
+                        setSelectedType(type.value);
+                        navigate(`/search?type=${type.value}`);
+                      }}
+                      className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${selectedType === type.value
+                          ? 'bg-amber-500 text-black'
+                          : 'bg-gray-800 text-white hover:bg-gray-700'
+                        }`}
+                    >
+                      <span className="block text-lg">
+                        <FontAwesomeIcon icon={type.icon} />
+                      </span>
+                      <span className="text-xs">{type.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="relative max-w-3xl">
+                  <input
+                    type="text"
+                    placeholder="영화 검색..."
+                    readOnly
+                    onFocus={() => navigate(`/search?type=${selectedType}`)}
+                    onClick={() => navigate(`/search?type=${selectedType}`)}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
+                  />
+                </div>
+              </div>
               <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} orientation="horizontal" />
               <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
               <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />

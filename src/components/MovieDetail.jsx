@@ -164,7 +164,7 @@ export default function MovieDetail() {
   // ▼ 추가: 데이터 로딩 가드 (초기 null 접근 방지)
   if (!movie || !credits) {
     return (
-      <div className="min-h-screen bg-gray-800 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
         불러오는 중...
       </div>
     );
@@ -174,7 +174,7 @@ export default function MovieDetail() {
   return (
     <>
       {/* Desktop Layout (768px+) */}
-      <div className="hidden md:block min-h-screen bg-gray-800 text-white" style={{ fontFamily: 'Pretendard, sans-serif' }}>
+      <div className="hidden md:block min-h-screen bg-gray-900 text-white" style={{ fontFamily: 'Pretendard, sans-serif' }}>
         <div className="container mx-auto px-4 py-20">
           <div className="flex gap-8 h-full">
             {/* Left Side - Movie Poster */}
@@ -192,7 +192,7 @@ export default function MovieDetail() {
 
             {/* Right Side - Movie Info */}
             <div className="w-2/3">
-              <div className="bg-gray-800 text-white">
+              <div className="bg-gray-900 text-white">
                 {/* Movie Title and Rating */}
                 <div className="mb-6">
                   <h1 className="text-3xl font-bold mb-3 text-white flex items-center gap-2">
@@ -470,7 +470,7 @@ export default function MovieDetail() {
         </div>
 
         {/* Mobile Content */}
-        <div className="bg-gray-800 text-white">
+        <div className="bg-gray-900 text-white">
           {/* Title and Meta Info */}
           <div className="px-4 pt-6 pb-4">
             <h1 className="text-2xl font-bold mb-3 text-white leading-tight">{movie.title}</h1>
@@ -728,7 +728,7 @@ export default function MovieDetail() {
       {isCastOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" aria-modal="true" role="dialog">
           <div className="absolute inset-0 bg-black/60" onClick={() => setIsCastOpen(false)} />
-          <div className="relative bg-gray-800 text-white w-[92vw] max-w-3xl rounded-lg shadow-xl">
+          <div className="relative bg-gray-900 text-white w-[92vw] max-w-3xl rounded-lg shadow-xl">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-lg font-bold">
                 출연진 전체 <span className="text-blue-400">({castList.length})</span>
