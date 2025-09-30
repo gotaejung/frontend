@@ -21,6 +21,10 @@ export default function App() {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [popular, setPopular] = useState([]);
   const [upComing, setUpComing] = useState([]);
+  const [recommend, setRecommend] = useState([]);
+  const [comedyMovies, setComedyMovies] = useState([]);
+  const [actionMovies, setActionMovies] = useState([]);
+  const [romanceMovies, setRomanceMovies] = useState([]);
 
 
   useEffect(() => {
@@ -29,9 +33,26 @@ export default function App() {
         const np = await api.get(`now_playing?language=ko-KR`);
         const po = await api.get(`popular?language=ko-KR`);
         const up = await api.get(`upcoming?language=ko-KR`);
+        // recommend 대신 top_rated 사용
+        const rc = await api.get(`top_rated?language=ko-KR`)
+
+        // 코미디 영화 (장르 ID: 35)
+        const comedy = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=35&language=ko-KR`)
+
+        // 액션 영화 (장르 ID: 28)
+        const action = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=28&language=ko-KR`)
+
+        // 로맨스 영화 (장르 ID: 10749)
+        const romance = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=10749&language=ko-KR`)
+
         setNowPlaying(np.data.results.filter(movie => movie.poster_path))
         setPopular(po.data.results.filter(movie => movie.poster_path))
         setUpComing(up.data.results.filter(movie => movie.poster_path))
+        setRecommend(rc.data.results.filter(movie => movie.poster_path))
+        setComedyMovies(comedy.data.results.filter(movie => movie.poster_path))
+        setActionMovies(action.data.results.filter(movie => movie.poster_path))
+        setRomanceMovies(romance.data.results.filter(movie => movie.poster_path))
+
       }
       catch (err) {
         console.error('로딩실패', err)
@@ -47,7 +68,7 @@ export default function App() {
    * 
   */
 
-  const isLoading = nowPlaying.length === 0 && popular.length === 0 && upComing.length === 0;
+  const isLoading = nowPlaying.length === 0 && popular.length === 0 && upComing.length === 0 && recommend.length === 0 && actionMovies.length === 0 && romanceMovies.length === 0 && comedyMovies.length === 0;
 
   if (isLoading) {
     return (
@@ -64,12 +85,13 @@ export default function App() {
           <Route path="/" element={
             <>
               <VideoHero />
-              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6}/>
-              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6}/>
-              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6}/>
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={upComing} m_v={2} p_v={6}/>
-              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={upComing} m_v={2} p_v={6}/>
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={upComing} m_v={2} p_v={6}/>
+              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
+              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
+              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
@@ -81,14 +103,14 @@ export default function App() {
 }
 
 function Header() {
-    return (
+  return (
     <header className="fixed top-0 left-0 w-full py-4 px-2 bg-black/90 z-50">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/">
             <img src="./logo.svg" alt="Logo" className="w-50" />
           </Link>
-          
+
           <nav className="hidden md:flex space-x-8 ml-8">
             <Link to="/About" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
               About
@@ -104,7 +126,7 @@ function Header() {
             </Link>
           </nav>
         </div>
-        
+
         <div className="flex items-center space-x-6">
           <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
             검색
@@ -153,18 +175,18 @@ function VideoHero() {
           <SwiperSlide key={index}>
             <div className="relative w-full h-full">
               {slide.video ? (
-                <video 
-                  autoPlay 
-                  muted 
-                  loop 
-                  playsInline 
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   className='absolute top-0 left-0 w-full h-full object-cover'
                 >
                   <source src={slide.video} />
                 </video>
               ) : (
-                <img 
-                  src={slide.image} 
+                <img
+                  src={slide.image}
                   alt={slide.title}
                   className='absolute top-0 left-0 w-full h-full object-cover'
                 />
