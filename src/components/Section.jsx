@@ -21,9 +21,9 @@ export default function Section({ title, items, m_v, p_v, orientation = "vertica
 
           }}
         >
-          {items.map((m) => (
+          {items.map((m, index) => (
             <SwiperSlide key={m.id}>
-              <Card movie={m} orientation={orientation} />
+              <Card movie={m} orientation={orientation} index={index} />
             </SwiperSlide>
           ))}
         </Swiper>

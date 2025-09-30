@@ -154,7 +154,7 @@ function VideoHero() {
       title: "액션 무비 월드",
       subtitle: "스릴 넘치는 액션 영화의 세계로!",
       buttonText: "액션 영화 보기",
-      image: "poster1.svg"
+      image: "poster3.svg"
     },
     {
       title: "로맨틱 시네마",
