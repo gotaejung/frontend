@@ -44,7 +44,7 @@ export default function App() {
         const action = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=28&language=ko-KR`)
 
         // 로맨스 영화 (장르 ID: 10749)
-        const romance = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=10749&language=ko-KR`)
+        const romance = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=10749&language=ko-KR&include_adult=false&certification_country=KR&certification.lte=15`)
 
         setNowPlaying(np.data.results.filter(movie => movie.poster_path))
         setPopular(po.data.results.filter(movie => movie.poster_path))
@@ -90,9 +90,9 @@ export default function App() {
               <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
               <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
               <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
-              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
