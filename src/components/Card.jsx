@@ -8,6 +8,37 @@ export default function Card({ movie, orientation = "vertical", index }) {
     ? `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
     : `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
 
+  // 모바일 레이아웃 (767px 이하)
+  if (orientation === "mobile") {
+    return (
+      <Link to={`/movie/${movie.id}`} className="block group">
+        <div className="flex gap-3 bg-neutral-900 rounded-lg overflow-hidden">
+          {/* 포스터 이미지 */}
+          <div className="w-28 flex-shrink-0 relative">
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+
+          {/* 컨텐츠 영역 */}
+          <div className="flex-1 p-3 flex flex-col justify-center">
+            <h4 className="font-bold text-base mb-2 line-clamp-2">{movie.title}</h4>
+            <div className="flex items-center gap-2 text-sm">
+              <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+              <span className="text-[#fff7df] font-bold">{movie.vote_average?.toFixed(1)}</span>
+            </div>
+            {movie.release_date && (
+              <div className="text-xs text-gray-400 mt-1">
+                {movie.release_date}
+              </div>
+            )}
+          </div>
+        </div>
+      </Link>
+    )
+  }
 
   // 세로형 레이아웃
   if (orientation === "vertical") {
@@ -15,14 +46,15 @@ export default function Card({ movie, orientation = "vertical", index }) {
       <Link to={`/movie/${movie.id}`} className="block group">
         <div className="flex gap-3 items-start">
           {/* 순위 숫자 */}
-          {/* {index !== undefined && (
+          {index !== undefined && (
             <div className="flex-shrink-0 mt-4">
               <div className="flex items-center justify-center text-4xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
                 {index + 1}
               </div>
             </div>
-          )} */}
+          )}
           <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
+
             {/* 포스터 이미지 */}
             <img
               src={img}
@@ -47,46 +79,35 @@ export default function Card({ movie, orientation = "vertical", index }) {
   }
 
   // 가로형 레이아웃
-
-if (orientation === "horizontal") {
-  return (
-    <Link to={`/movie/${movie.id}`} className="block group">
-      <div className="flex gap-3 items-start">
-        {/* 순위 숫자 */}
-        {index !== undefined && (
-          <div className="flex-shrink-0 mt-2">
-            <div className="flex items-center justify-center text-3xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
-              {index + 1}
-            </div>
-          </div>
-        )}
-        <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
+  if (orientation === "horizontal") {
+    return (
+      <Link to={`/movie/${movie.id}`} className="block group">
+        <div className="rounded-lg overflow-hidden bg-neutral-800">
           {/* 포스터 이미지 */}
           <img
             src={img}
             alt={movie.title}
-            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-          />
+            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"/>
 
           {/* 컨텐츠 영역 */}
           <div className="p-3">
             <h4 className="font-bold text-lg mb-2 text-white line-clamp-2">{movie.title}</h4>
             <div className="flex items-center gap-2">
+
               {/* 별점 표시 */}
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
                   <FontAwesomeIcon
                     key={i}
                     icon={faHeart}
-                    className={`text-xs ${i < Math.floor(movie.vote_average / 2) ? 'text-red-400' : 'text-gray-400'}`}/>
+                    className={`text-xs ${i < Math.floor(movie.vote_average / 2) ? 'text-red-500' : 'text-gray-400'}`} />
                 ))}
               </div>
-              <span className="text-[#fff7df] font-bold text-sm">{movie.vote_average}</span>
+              <span className="text-[#fff7df]font-bold text-sm">{movie.vote_average}</span>
             </div>
           </div>
         </div>
-      </div>
-    </Link>
-  )
-}
+      </Link>
+    )
+  }
 }

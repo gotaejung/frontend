@@ -111,8 +111,8 @@ export default function App() {
             <>
               <VideoHero />
               {/* 검색 타입 그리드 + 검색 인풋 */}
-              <div className="container mx-auto px-4 py-6">
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
+              <div className="container mx-auto px-4 py-4 md:py-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
                   {searchTypes.map((type) => (
                     <button
                       key={type.value}
@@ -120,12 +120,12 @@ export default function App() {
                         setSelectedType(type.value);
                         navigate(`/search?type=${type.value}`);
                       }}
-                      className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${selectedType === type.value
+                      className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
                           ? 'bg-amber-500 text-black'
                           : 'bg-gray-800 text-white hover:bg-gray-700'
                         }`}
                     >
-                      <span className="block text-lg">
+                      <span className="block text-base md:text-lg">
                         <FontAwesomeIcon icon={type.icon} />
                       </span>
                       <span className="text-xs">{type.label}</span>
@@ -140,16 +140,17 @@ export default function App() {
                     readOnly
                     onFocus={() => navigate(`/search?type=${selectedType}`)}
                     onClick={() => navigate(`/search?type=${selectedType}`)}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
                   />
                 </div>
               </div>
-                  <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
+              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} orientation="horizontal" />
               <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
               <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
               <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
@@ -166,11 +167,11 @@ export default function App() {
 
 function Header() {
   return (
-    <header className="fixed top-0 left-0 w-full py-4 px-2 bg-black/90 z-50">
+    <header className="fixed top-0 left-0 w-full py-3 md:py-4 px-2 bg-black/90 z-50">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/">
-            <img src="./logo.svg" alt="Logo" className="w-50" />
+            <img src="./logo.svg" alt="Logo" className="w-32 md:w-50" />
           </Link>
 
           {/* <nav className="hidden md:flex space-x-8 ml-8">
@@ -186,11 +187,11 @@ function Header() {
           </nav> */}
         </div>
 
-        <div className="flex items-center space-x-6">
-          <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+        <div className="flex items-center space-x-3 md:space-x-6">
+          <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
             검색
           </Link>
-          <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold">
+          <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
             My page
           </Link>
           <SocialLogin />
@@ -218,59 +219,11 @@ function VideoHero() {
       subtitle: "감동적인 러브 스토리와 함께하세요.",
       buttonText: "로맨스 영화 보기",
       image: "poster2.svg"
-    },
-    {
-      title: "케이팝 데몬 헌터스 (2025)",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image1.svg"
-    },
-    {
-      title: "사마귀",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image2.svg"
-    },
-    {
-      title: "컨저링:마지막 의식",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image3.svg"
-    },
-    {
-      title: "노바디2",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image4.svg"
-    },
-    {
-      title: "F1 더 무비",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image5.svg"
-    },
-    {
-      title: "모아나2",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image6.svg"
-    },
-    {
-      title: "극장판 귀멸의 칼날: 무한성편",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image7.svg"
-    },
-    {
-      title: "아바타:물의 길",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image8.svg"
     }
   ];
 
   return (
-    <section className="relative h-screen overflow-hidden">
+    <section className="relative h-[60vh] md:h-screen overflow-hidden">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
@@ -300,14 +253,14 @@ function VideoHero() {
                 />
               )}
               <div className="absolute inset-0 bg-black/50"></div>
-              <div className="relative z-10 flex-col flex items-center justify-center h-full">
-                <h2 className="text-5xl md:text-7xl font-bold mb-6 text-amber-100">
+              <div className="relative z-10 flex-col flex items-center justify-center h-full px-4">
+                <h2 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-amber-100 text-center">
                   {slide.title}
                 </h2>
-                <p className="text-xl md:text-2xl mb-8 max-w-2xl text-amber-100 text-center">
+                <p className="text-base md:text-xl lg:text-2xl mb-6 md:mb-8 max-w-2xl text-amber-100 text-center px-4">
                   {slide.subtitle}
                 </p>
-                <button className="bg-amber-100 hover:bg-amber-500 hover:text-white text-black px-8 py-4 rounded-lg text-lg font-bold transition-colors duration-300">
+                <button className="bg-amber-100 hover:bg-amber-500 hover:text-white text-black px-6 md:px-8 py-3 md:py-4 rounded-lg text-base md:text-lg font-bold transition-colors duration-300">
                   {slide.buttonText}
                 </button>
               </div>
