@@ -11,7 +11,6 @@ import {
   faBuilding,
   faTag,
   // faTv, // TV 사용 시 주석 해제
-
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -44,7 +43,7 @@ export default function App() {
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState('multi');
 
-    const searchTypes = [
+  const searchTypes = [
     { value: 'multi', label: '통합 검색', icon: faMagnifyingGlass },
     { value: 'movie', label: '영화', icon: faFilm },
     /* { value: 'tv', label: 'TV 시리즈', icon: faTv }, */
@@ -53,8 +52,6 @@ export default function App() {
     { value: 'company', label: '제작사', icon: faBuilding },
     { value: 'keyword', label: '키워드', icon: faTag },
   ];
-
-
   useEffect(() => {
     async function loadNowPlaying() {
       try {
