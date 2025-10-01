@@ -12,7 +12,7 @@ export default function Section({ title, items, m_v, p_v, orientation = "vertica
         <h2 className="text-[32px] font-bold mb-6">{title}</h2>
 
         <Swiper modules={[Navigation, Pagination]}
-          slidesPerView={orientation === "horizontal" ? 5 : 8}
+          slidesPerView={orientation === "horizontal" ? 2 : 8}
           spaceBetween={24}
           navigation
           breakpoints={{

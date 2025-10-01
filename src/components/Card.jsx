@@ -15,15 +15,14 @@ export default function Card({ movie, orientation = "vertical", index }) {
       <Link to={`/movie/${movie.id}`} className="block group">
         <div className="flex gap-3 items-start">
           {/* 순위 숫자 */}
-          {index !== undefined && (
+          {/* {index !== undefined && (
             <div className="flex-shrink-0 mt-4">
               <div className="flex items-center justify-center text-4xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
                 {index + 1}
               </div>
             </div>
-          )}
+          )} */}
           <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
-
             {/* 포스터 이미지 */}
             <img
               src={img}
@@ -48,35 +47,46 @@ export default function Card({ movie, orientation = "vertical", index }) {
   }
 
   // 가로형 레이아웃
-  if (orientation === "horizontal") {
-    return (
-      <Link to={`/movie/${movie.id}`} className="block group">
-        <div className="rounded-lg overflow-hidden bg-neutral-800">
+
+if (orientation === "horizontal") {
+  return (
+    <Link to={`/movie/${movie.id}`} className="block group">
+      <div className="flex gap-3 items-start">
+        {/* 순위 숫자 */}
+        {index !== undefined && (
+          <div className="flex-shrink-0 mt-2">
+            <div className="flex items-center justify-center text-3xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
+              {index + 1}
+            </div>
+          </div>
+        )}
+        <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
           {/* 포스터 이미지 */}
           <img
             src={img}
             alt={movie.title}
-            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"/>
+            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+          />
 
           {/* 컨텐츠 영역 */}
           <div className="p-3">
             <h4 className="font-bold text-lg mb-2 text-white line-clamp-2">{movie.title}</h4>
             <div className="flex items-center gap-2">
-
               {/* 별점 표시 */}
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
                   <FontAwesomeIcon
                     key={i}
                     icon={faHeart}
-                    className={`text-xs ${i < Math.floor(movie.vote_average / 2) ? 'text-red-500' : 'text-gray-400'}`} />
+                    className={`text-xs ${i < Math.floor(movie.vote_average / 2) ? 'text-red-400' : 'text-gray-400'}`}/>
                 ))}
               </div>
-              <span className="text-[#fff7df]font-bold text-sm">{movie.vote_average}</span>
+              <span className="text-[#fff7df] font-bold text-sm">{movie.vote_average}</span>
             </div>
           </div>
         </div>
-      </Link>
-    )
-  }
+      </div>
+    </Link>
+  )
+}
 }

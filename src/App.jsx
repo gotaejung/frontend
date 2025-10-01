@@ -144,13 +144,12 @@ export default function App() {
                   />
                 </div>
               </div>
-              <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
-              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} orientation="horizontal" />
+                  <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
               <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
               <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
               <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
             </>
           } />
           <Route path='/movie/:id' element={<MovieDetail />} />
@@ -219,6 +218,54 @@ function VideoHero() {
       subtitle: "감동적인 러브 스토리와 함께하세요.",
       buttonText: "로맨스 영화 보기",
       image: "poster2.svg"
+    },
+    {
+      title: "케이팝 데몬 헌터스 (2025)",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image1.svg"
+    },
+    {
+      title: "사마귀",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image2.svg"
+    },
+    {
+      title: "컨저링:마지막 의식",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image3.svg"
+    },
+    {
+      title: "노바디2",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image4.svg"
+    },
+    {
+      title: "F1 더 무비",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image5.svg"
+    },
+    {
+      title: "모아나2",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image6.svg"
+    },
+    {
+      title: "극장판 귀멸의 칼날: 무한성편",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image7.svg"
+    },
+    {
+      title: "아바타:물의 길",
+      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      buttonText: "팝콘플레이 시작하기",
+      image: "image8.svg"
     }
   ];
 
