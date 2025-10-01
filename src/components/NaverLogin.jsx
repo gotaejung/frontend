@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const NaverLogin = () => {
+  const naverRef = useRef(null);
+
   useEffect(() => {
     // Naver SDK 로드
     if (!window.naver) {
@@ -10,45 +12,61 @@ const NaverLogin = () => {
       document.head.appendChild(script);
       
       script.onload = () => {
-        initNaverLogin();
+        setTimeout(() => initNaverLogin(), 100); // 약간의 지연 추가
       };
     } else {
-      initNaverLogin();
+      setTimeout(() => initNaverLogin(), 100);
     }
   }, []);
 
   const initNaverLogin = () => {
-    if (window.naver) {
-      const naverLogin = new window.naver.LoginWithNaverId({
-        clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
-        callbackUrl: `${window.location.origin}/auth/naver/callback`,
-        isPopup: false,
-        loginButton: { color: 'green', type: 1, height: 40 }
-      });
-      naverLogin.init();
+    if (window.naver && naverRef.current) {
+      try {
+        const naverLogin = new window.naver.LoginWithNaverId({
+          clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
+          callbackUrl: `${window.location.origin}/auth/naver/callback`,
+          isPopup: false,
+          loginButton: { color: 'green', type: 1, height: 40 },
+          callbackHandle: true
+        });
+        naverLogin.init();
+      } catch (error) {
+        console.warn('네이버 로그인 초기화 오류:', error);
+      }
     }
   };
 
   const handleNaverLogin = () => {
     if (window.naver) {
-      const naverLogin = new window.naver.LoginWithNaverId({
-        clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
-        callbackUrl: `${window.location.origin}/auth/naver/callback`,
-        isPopup: false
-      });
-      naverLogin.init();
-      naverLogin.login();
+      try {
+        // 직접 로그인 URL로 리다이렉트
+        const clientId = import.meta.env.VITE_NAVER_CLIENT_ID;
+        const redirectUri = encodeURIComponent(`${window.location.origin}/auth/naver/callback`);
+        const state = Math.random().toString(36).substring(2, 15);
+        
+        const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+        
+        window.location.href = naverLoginUrl;
+      } catch (error) {
+        console.error('네이버 로그인 오류:', error);
+      }
     }
   };
 
   return (
-    <button
-      onClick={handleNaverLogin}
-      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
-    >
-      <span>🟢</span>
-      네이버 로그인
-    </button>
+    <div>
+      {/* 네이버 SDK가 필요로 하는 숨겨진 요소 */}
+      <div ref={naverRef} id="naverIdLogin" style={{ display: 'none' }}></div>
+      
+      {/* 커스텀 로그인 버튼 */}
+      <button
+        onClick={handleNaverLogin}
+        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
+      >
+        <span>🟢</span>
+        네이버 로그인
+      </button>
+    </div>
   );
 };
 
