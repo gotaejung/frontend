@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import SocialLogin from "./components/SocialLogin";
 import Chatbot from "./components/Chatbot";
 import { Outlet } from "react-router";
 
@@ -32,7 +31,9 @@ function Header() {
           <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
             My page
           </Link>
-          <SocialLogin />
+          <Link to="/login" className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg font-bold transition-colors duration-300 text-sm md:text-base">
+            로그인
+          </Link>
         </div>
       </div>
     </header>

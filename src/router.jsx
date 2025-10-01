@@ -4,6 +4,7 @@ import App from "./App";
 import MovieDetail from "./components/MovieDetail";
 import SearchPage from "./components/SearchPage";
 import MyPage from "./components/MyPage";
+import LoginPage from "./components/LoginPage";
 import KakaoCallback from "./components/KakaoCallback";
 import NaverCallback from "./components/NaverCallback";
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "My Page",
         element: <MyPage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
       },
       {
         path: "auth/kakao/callback",

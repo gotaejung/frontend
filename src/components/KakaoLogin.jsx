@@ -47,8 +47,9 @@ const KakaoLogin = () => {
   return (
     <button
       onClick={handleKakaoLogin}
-      className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
+      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-4 rounded-lg font-bold transition-colors duration-300 flex items-center justify-center gap-3 text-lg"
     >
+      <span>💬</span>
       카카오 로그인
     </button>
   );

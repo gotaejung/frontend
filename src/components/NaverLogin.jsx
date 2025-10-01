@@ -61,8 +61,9 @@ const NaverLogin = () => {
       {/* 커스텀 로그인 버튼 */}
       <button
         onClick={handleNaverLogin}
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
+        className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-lg font-bold transition-colors duration-300 flex items-center justify-center gap-3 text-lg"
       >
+        <span>🔗</span>
         네이버 로그인
       </button>
     </div>
