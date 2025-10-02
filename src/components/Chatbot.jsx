@@ -63,7 +63,7 @@ export default function ChatBot() {
         <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col">
           <div className="bg-yellow-500 text-black p-4 rounded-t-lg">
             <div className="flex justify-between items-center">
-              <h3 className="font-bold">GOFLIX 챗봇</h3>
+              <h3 className="font-bold">팝콘플레이 챗봇</h3>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-black hover:text-gray-600"

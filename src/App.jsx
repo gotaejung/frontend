@@ -1,6 +1,5 @@
 import axios from 'axios';
 import api from "./api/axios";
-import { Route, Routes, Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHouse,
@@ -33,7 +32,6 @@ export default function App() {
   const [comedyMovies, setComedyMovies] = useState([]);
   const [actionMovies, setActionMovies] = useState([]);
   const [romanceMovies, setRomanceMovies] = useState([]);
-  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState('multi');
 
   const searchTypes = [
@@ -98,54 +96,52 @@ export default function App() {
   return (
     <>
       <main className="pt-16 bg-black text-white">
-        <Routes>
-          <Route path="/" element={
-            <>
-              <VideoHero />
-              {/* 검색 타입 그리드 + 검색 인풋 */}
-              <div className="container mx-auto px-4 py-4 md:py-6">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
-                  {searchTypes.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() => {
-                        setSelectedType(type.value);
-                        navigate(`/search?type=${type.value}`);
-                      }}
-                      className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
-                        ? 'bg-amber-500 text-black'
-                        : 'bg-gray-800 text-white hover:bg-gray-700'
-                        }`}
-                    >
-                      <span className="block text-base md:text-lg">
-                        <FontAwesomeIcon icon={type.icon} />
-                      </span>
-                      <span className="text-xs">{type.label}</span>
-                    </button>
-                  ))}
-                </div>
 
-                <div className="relative max-w-3xl">
-                  <input
-                    type="text"
-                    placeholder="영화 검색..."
-                    readOnly
-                    onFocus={() => navigate(`/search?type=${selectedType}`)}
-                    onClick={() => navigate(`/search?type=${selectedType}`)}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
-                  />
-                </div>
-              </div>
-              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
-              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
-              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
-            </>
-          } />
-          <Route path='/movie/:id' element={<MovieDetail />} />
-        </Routes>
+        <>
+          <VideoHero />
+          {/* 검색 타입 그리드 + 검색 인풋 */}
+          <div className="container mx-auto px-4 py-4 md:py-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
+              {searchTypes.map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() => {
+                    setSelectedType(type.value);
+                    navigate(`/search?type=${type.value}`);
+                  }}
+                  className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
+                    ? 'bg-amber-500 text-black'
+                    : 'bg-gray-800 text-white hover:bg-gray-700'
+                    }`}
+                >
+                  <span className="block text-base md:text-lg">
+                    <FontAwesomeIcon icon={type.icon} />
+                  </span>
+                  <span className="text-xs">{type.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="relative max-w-3xl">
+              <input
+                type="text"
+                placeholder="영화 검색..."
+                readOnly
+                onFocus={() => navigate(`/search?type=${selectedType}`)}
+                onClick={() => navigate(`/search?type=${selectedType}`)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
+              />
+            </div>
+          </div>
+          <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
+          <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
+          <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
+          <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
+          <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
+          <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
+        </>
+
+
       </main>
     </>
   )
@@ -193,7 +189,7 @@ function VideoHero() {
     },
   ];
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchAllMovieData = async () => {
       try {
         const moviePromises = slides.map(async (slide) => {
@@ -202,15 +198,15 @@ function VideoHero() {
             const searchResponse = await axios.get(
               `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${slide.searchTitle}&language=ko-KR`
             );
-            
+
             if (searchResponse.data.results.length > 0) {
               const movieId = searchResponse.data.results[0].id;
-              
+
               // 2단계: 영화 상세 정보 가져오기
               const detailResponse = await axios.get(
                 `https://api.themoviedb.org/3/movie/${movieId}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`
               );
-              
+
               return detailResponse.data;
             }
             return null;
@@ -219,14 +215,14 @@ function VideoHero() {
             return null;
           }
         });
-        
+
         const results = await Promise.all(moviePromises);
         setMovieDataList(results);
       } catch (error) {
         console.error('영화 정보 로드 실패:', error);
       }
     };
-    
+
     fetchAllMovieData();
   }, []);
 
@@ -260,7 +256,7 @@ function VideoHero() {
                   className='absolute top-0 left-0 w-full h-full object-cover'
                 />
               )}
-                     <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
               <div className="relative z-10 flex-col flex justify-center h-full pl-45">
                 <div className="max-w-none">
                   <h2 className="text-2xl md:text-7xl font-bold mb-6 text-[fffcf2] text-left font-pretendard">
