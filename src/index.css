@@ -3,3 +3,32 @@
 * {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
+
+/* Swiper 네비게이션 버튼 커스터마이징 */
+.swiper-button-prev {
+  background-image: url('/slider-arrow-left.svg') !important;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 50px !important;
+  height: 50px !important;
+}
+.swiper-navigation-icon{display:none !important}
+.swiper-button-next {
+  background-image: url('/slider-arrow-right.svg') !important;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+/* 네비게이션 버튼 스타일링 */
+.swiper-button-prev,
+.swiper-button-next {
+  /* 버튼 크기와 위치 조정 */
+  width: 50px !important;
+  height: 50px !important;
+  margin-top: -25px !important;
+}
+

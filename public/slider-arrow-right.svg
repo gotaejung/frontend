@@ -1,0 +1,22 @@
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <path id="j2h6x5k7qa" d="m12.586,17.586c0.72,-0.721 1.855,-0.777 2.64,-0.167l0.188,0.167l8.586,8.584l8.586,-8.584c0.72,-0.721 1.855,-0.777 2.64,-0.167l0.188,0.167c0.721,0.72 0.777,1.855 0.167,2.64l-0.167,0.188l-10,10c-0.72,0.721 -1.855,0.777 -2.64,0.167l-0.188,-0.167l-10,-10c-0.781,-0.78 -0.781,-2.047 0,-2.828z"/>
+ </defs>
+ <g>
+  <title>Layer 1</title>
+  <g fill="none" fill-rule="evenodd" id="svg_1" transform="rotate(180 24 24)">
+   <g id="svg_2">
+    <g id="svg_3">
+     <g transform="matrix(0 -1 -1 0 4771 2605)" id="svg_4">
+      <path d="m2557,4771l48,0l0,-48l-48,0l0,48z" id="svg_5"/>
+      <mask id="qzmp4eq56b" fill="#fff">
+       <use xlink:href="#j2h6x5k7qa" id="svg_6"/>
+      </mask>
+      <use fill="#FFF" fill-rule="nonzero" xlink:href="#j2h6x5k7qa" y="4723" x="2557" id="svg_7"/>
+      <path fill="#FFF" fill-rule="nonzero" d="m2557,4771l48,0l0,-48l-48,0l0,48z" mask="url(#qzmp4eq56b)" id="svg_8"/>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
