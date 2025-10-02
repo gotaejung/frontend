@@ -48,6 +48,8 @@ export default function App() {
   useEffect(() => {
     async function loadNowPlaying() {
       try {
+        console.log('API 키 확인:', import.meta.env.VITE_TMDB_API_KEY);
+        
         const np = await api.get(`now_playing?language=ko-KR`);
         const po = await api.get(`popular?language=ko-KR`);
         const up = await api.get(`upcoming?language=ko-KR`);
@@ -73,7 +75,14 @@ export default function App() {
 
       }
       catch (err) {
-        console.error('로딩실패', err)
+        console.error('로딩실패', err);
+        console.error('에러 상세 정보:', {
+          message: err.message,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data,
+          url: err.config?.url
+        });
       }
     }
     loadNowPlaying();

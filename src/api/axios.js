@@ -14,7 +14,7 @@ const chatApi = axios.create({
   baseURL: 'https://backend-1w2e.onrender.com',
   //baseURL: 'http://localhost:8000',
   headers: { 
-    'Content-Type': 'application / json' } 
+    'Content-Type': 'application/json' } 
 });
 
 export { chatApi };

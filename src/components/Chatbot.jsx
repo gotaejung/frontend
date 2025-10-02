@@ -19,6 +19,9 @@ export default function ChatBot() {
     setIsLoading(true);
 
     try {
+      console.log('챗봇 메시지 전송:', messageToSend);
+      console.log('API 엔드포인트:', chatApi.defaults.baseURL);
+      
       const response = await chatApi.post('/chat', { message: messageToSend });
       const botMessage = {
         id: Date.now() + 1,
@@ -28,9 +31,17 @@ export default function ChatBot() {
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('챗봇 API 오류:', error);
+      console.error('에러 상세 정보:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: error.config?.url
+      });
+      
       const errorMessage = {
         id: Date.now() + 1,
-        text: '죄송합니다. 현재 챗봇 서비스에 문제가 있습니다. 잠시 후 다시 시도해주세요.',
+        text: `죄송합니다. 현재 챗봇 서비스에 문제가 있습니다. (오류: ${error.response?.status || 'Unknown'}) 잠시 후 다시 시도해주세요.`,
         sender: 'bot'
       };
       setMessages(prev => [...prev, errorMessage]);
