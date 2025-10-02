@@ -2,14 +2,25 @@ import api from "../api/axios";
 import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload, faHeart, faArrowUpRightFromSquare, faMobileScreenButton, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faHeart,
+  faArrowUpRightFromSquare,
+  faMobileScreenButton,
+  faUser,
+  faChevronDown,     // ▼ 유지
+  faChevronUp        // ▼ 유지
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null)
   const [credits, setCredits] = useState(null)
-  const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
+  const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
+
+  // ▼ 만료 아이콘 토글 상태 추가
+  const [showExpiry, setShowExpiry] = useState(false);
 
   // 추가: 유사 영화 토글/데이터 상태
   const [similar, setSimilar] = useState([]);
@@ -42,7 +53,7 @@ export default function MovieDetail() {
         console.error('영화 정보를 가져오는데 실패했습니다:', error);
       }
     }
-    // id 변경 시 하단 뷰 초기화
+    // id 변경 시 상태 초기화
     setShowSimilar(false);
     setSimilar([]);
     setSimilarError(null);
@@ -51,6 +62,9 @@ export default function MovieDetail() {
     setReviewsTotal(0);
     setReviewsError(null);
     setLoadingReviews(false);
+
+    // 만료 팝오버 닫기
+    setShowExpiry(false);
 
     getMovieDetails();
   }, [id])/* 의존성배열의 값이 바꿀때  실행 */
@@ -199,7 +213,32 @@ export default function MovieDetail() {
                 <div className="mb-6">
                   <h1 className="text-3xl font-bold mb-3 text-white flex items-center gap-2">
                     {movie.title}
-                    <span className="text-gray-400 text-sm">▼</span>
+
+                    {/* ▼ 토글 버튼(아래/위 화살표) */}
+                    <span className="relative inline-block">
+                      <button
+                        type="button"
+                        onClick={() => setShowExpiry(v => !v)}
+                        className="text-gray-400 hover:text-white text-sm align-middle"
+                        aria-expanded={showExpiry}
+                        aria-label={showExpiry ? '만료정보 닫기' : '만료정보 열기'}
+                      >
+                        <FontAwesomeIcon icon={showExpiry ? faChevronUp : faChevronDown} />
+                      </button>
+
+                      {/* ▼ 팝오버: 텍스트만 표시 */}
+                      {showExpiry && (
+                        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-20" role="tooltip">
+                          <div className="relative bg-gray-800 border border-gray-700 shadow-xl px-3 h-8 rounded-md flex items-center justify-center">
+                            <span className="text-xs font-semibold text-white whitespace-nowrap leading-none">
+                              0000/00/00만료
+                            </span>
+                            {/* 꼬리 */}
+                            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-800 border-l border-t border-gray-700 rotate-45" />
+                          </div>
+                        </div>
+                      )}
+                    </span>
                   </h1>
                   
                   <div className="flex items-center gap-3 mb-4">
@@ -234,7 +273,7 @@ export default function MovieDetail() {
                       ) : '정보 없음'}
                     </span>
                   </div>
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start">
                     <span className="text-gray-400 font-medium w-16">출연진</span>
                     <span className="text-white">
                       {castList.slice(0, 3).map((actor, idx) => (
@@ -265,32 +304,33 @@ export default function MovieDetail() {
                 </div>
 
                 {/* Watch Button */}
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold text-lg mb-6 transition-colors">
-                  재생하기
-                </button>
-
-                {/* Action Buttons */}
-                <div className="flex gap-4 mb-8">
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="다운로드">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <FontAwesomeIcon icon={faDownload} className="text-base" />
-                    </div>
+                {/* Actions: Play + Icons (in one row) */}
+                <div className="flex items-center gap-3 sm:gap-4 mb-8">
+                  <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold text-lg transition-colors">
+                    재생하기
                   </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="찜">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <FontAwesomeIcon icon={faHeart} className="text-base" />
-                    </div>
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="공유">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
-                    </div>
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="모바일">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
-                    </div>
-                  </button>
+                  <div className="flex gap-3 sm:gap-4">
+                    <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="다운로드">
+                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon icon={faDownload} className="text-base" />
+                      </div>
+                    </button>
+                    <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="찜">
+                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon icon={faHeart} className="text-base" />
+                      </div>
+                    </button>
+                    <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="공유">
+                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
+                      </div>
+                    </button>
+                    <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="모바일">
+                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Movie Overview */}
@@ -475,7 +515,33 @@ export default function MovieDetail() {
         <div className="bg-gray-900 text-white">
           {/* Title and Meta Info */}
           <div className="px-4 pt-6 pb-4">
-            <h1 className="text-2xl font-bold mb-3 text-white leading-tight">{movie.title}</h1>
+            <h1 className="text-2xl font-bold mb-3 text-white leading-tight flex items-center gap-2">
+              {movie.title}
+
+              {/* 모바일 제목 옆 토글 */}
+              <span className="relative inline-block">
+                <button
+                  type="button"
+                  onClick={() => setShowExpiry(v => !v)}
+                  className="text-gray-400 hover:text-white text-sm align-middle"
+                  aria-expanded={showExpiry}
+                  aria-label={showExpiry ? '만료정보 닫기' : '만료정보 열기'}
+                >
+                  <FontAwesomeIcon icon={showExpiry ? faChevronUp : faChevronDown} />
+                </button>
+
+                {showExpiry && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-20" role="tooltip">
+                    <div className="relative bg-gray-800 border border-gray-700 shadow-xl px-3 h-8 rounded-md flex items-center justify-center">
+                      <span className="text-xs font-semibold text-white whitespace-nowrap leading-none">
+                        0000/00/00만료
+                      </span>
+                      <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-800 border-l border-t border-gray-700 rotate-45" />
+                    </div>
+                  </div>
+                )}
+              </span>
+            </h1>
             
             {/* Rating and Meta */}
             <div className="flex items-center gap-1 text-sm mb-4">
@@ -491,35 +557,33 @@ export default function MovieDetail() {
             </div>
           </div>
 
-          {/* Watch Button */}
-          <div className="px-4 mb-6">
-            <button className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-lg transition-colors">
+          {/* Actions row: left Play, right Icons (tight gap) */}
+          <div className="px-4 mb-8 flex items-center justify-between">
+            <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold text-lg transition-colors">
               재생하기
             </button>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-8 mb-8">
-            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="다운로드">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <FontAwesomeIcon icon={faDownload} className="text-base" />
-              </div>
-            </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="찜">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <FontAwesomeIcon icon={faHeart} className="text-base" />
-              </div>
-            </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="공유">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
-              </div>
-            </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="모바일">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
-              </div>
-            </button>
+            <div className="flex items-center gap-2 sm:gap-3 ml-4">
+              <button className="text-gray-300 hover:text-white" aria-label="다운로드">
+                <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                  <FontAwesomeIcon icon={faDownload} className="text-base" />
+                </div>
+              </button>
+              <button className="text-gray-300 hover:text-white" aria-label="찜">
+                <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                  <FontAwesomeIcon icon={faHeart} className="text-base" />
+                </div>
+              </button>
+              <button className="text-gray-300 hover:text-white" aria-label="공유">
+                <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
+                </div>
+              </button>
+              <button className="text-gray-300 hover:text-white" aria-label="모바일">
+                <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                  <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
+                </div>
+              </button>
+            </div>
           </div>
 
           {/* Movie Details */}
