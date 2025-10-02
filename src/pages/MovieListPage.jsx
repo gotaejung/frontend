@@ -63,7 +63,7 @@ export default function MovieListPage() {
   }, [type]);
 
   return (
-    <main className="pt-16 min-h-screen bg-black text-white">
+    <main className="pt-14 min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl md:text-3xl font-bold">{pageMeta}</h1>
