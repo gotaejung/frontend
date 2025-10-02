@@ -21,6 +21,8 @@ import 'swiper/css/pagination';
 
 import Section from "./components/Section";
 import MovieDetail from "./components/MovieDetail";
+import SearchHeader from "./components/SearchHeader";
+import MovieListPage from "./pages/MovieListPage";
 
 
 

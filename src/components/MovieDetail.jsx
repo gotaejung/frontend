@@ -1,6 +1,8 @@
 import api from "../api/axios";
 import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload, faHeart, faArrowUpRightFromSquare, faMobileScreenButton, faUser } from '@fortawesome/free-solid-svg-icons';
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -269,24 +271,24 @@ export default function MovieDetail() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 mb-8">
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white">
+                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="다운로드">
                     <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-sm">📥</span>
+                      <FontAwesomeIcon icon={faDownload} className="text-base" />
                     </div>
                   </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white">
+                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="찜">
                     <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-sm">♡</span>
+                      <FontAwesomeIcon icon={faHeart} className="text-base" />
                     </div>
                   </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white">
+                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="공유">
                     <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-sm">↗</span>
+                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
                     </div>
                   </button>
-                  <button className="flex items-center gap-2 text-gray-300 hover:text-white">
+                  <button className="flex items-center gap-2 text-gray-300 hover:text-white" aria-label="모바일">
                     <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-sm">📱</span>
+                      <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
                     </div>
                   </button>
                 </div>
@@ -392,7 +394,7 @@ export default function MovieDetail() {
                               <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                                 {getAvatarUrl(r?.author_details?.avatar_path) ? (
                                   <img src={getAvatarUrl(r.author_details.avatar_path)} alt={r.author} className="w-full h-full object-cover" />
-                                ) : (<span className="text-lg">👤</span>)}
+                                ) : (<FontAwesomeIcon icon={faUser} className="text-lg text-gray-300" />)}
                               </div>
                               <div className="flex-1">
                                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -498,24 +500,24 @@ export default function MovieDetail() {
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-8 mb-8">
-            <button className="flex flex-col items-center text-gray-300 hover:text-white">
+            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="다운로드">
               <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <span className="text-sm">📥</span>
+                <FontAwesomeIcon icon={faDownload} className="text-base" />
               </div>
             </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white">
+            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="찜">
               <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <span className="text-sm">♡</span>
+                <FontAwesomeIcon icon={faHeart} className="text-base" />
               </div>
             </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white">
+            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="공유">
               <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <span className="text-sm">↗</span>
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-base" />
               </div>
             </button>
-            <button className="flex flex-col items-center text-gray-300 hover:text-white">
+            <button className="flex flex-col items-center text-gray-300 hover:text-white" aria-label="모바일">
               <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-500">
-                <span className="text-sm">📱</span>
+                <FontAwesomeIcon icon={faMobileScreenButton} className="text-base" />
               </div>
             </button>
           </div>
@@ -662,7 +664,7 @@ export default function MovieDetail() {
                             <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                               {getAvatarUrl(r?.author_details?.avatar_path) ? (
                                 <img src={getAvatarUrl(r.author_details.avatar_path)} alt={r.author} className="w-full h-full object-cover" />
-                              ) : (<span className="text-sm">👤</span>)}
+                              ) : (<FontAwesomeIcon icon={faUser} className="text-sm text-gray-300" />)}
                             </div>
                             <div className="flex-1">
                               <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -755,7 +757,7 @@ export default function MovieDetail() {
                           loading="lazy"
                         />
                       ) : (
-                        <span className="text-lg">👤</span>
+                        <FontAwesomeIcon icon={faUser} className="text-lg text-gray-300" />
                       )}
                     </div>
                     <div className="min-w-0">

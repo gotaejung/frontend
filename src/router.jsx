@@ -41,6 +41,10 @@ const router = createBrowserRouter([
         path: "auth/naver/callback",
         element: <NaverCallback />,
       },
+      {
+        path: '/*',
+        element: <App />,
+      },
     ],
   },
 ]);
