@@ -25,8 +25,12 @@ function Header() {
         </div>
 
         <div className="flex items-center space-x-3 md:space-x-6">
-          <Link to="/search" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
-            검색
+          <Link to="/search" className="hover:opacity-80 transition-opacity duration-300">
+            <img 
+              src="/search.svg" 
+              alt="검색" 
+              className="w-6 h-6 md:w-8 md:h-8"
+            />
           </Link>
           <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
             My page
