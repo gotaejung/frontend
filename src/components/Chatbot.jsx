@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { chatApi } from '../api/axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeadset } from '@fortawesome/free-solid-svg-icons';
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +52,11 @@ export default function ChatBot() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 w-16 h-16 bg-amber-100 text-black rounded-full shadow-lg z-50 flex items-center justify-center hover:bg-amber-500 transition-colors duration-300"
       >
-        <FontAwesomeIcon icon={faHeadset} size="lg" />
+        <img 
+          src="/chatbot.svg" 
+          alt="Chatbot" 
+          className="w-8 h-8"
+        />
       </button>
 
       {isOpen && (

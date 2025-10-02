@@ -14,10 +14,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import 'swiper/css/pagination';
 
 import Section from "./components/Section";
 
@@ -214,9 +213,8 @@ function VideoHero() {
   return (
     <section className="relative h-screen overflow-hidden">
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
+        modules={[Navigation, Autoplay]}
         navigation
-        pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         loop={true}
         className="w-full h-full"
