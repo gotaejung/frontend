@@ -1,7 +1,7 @@
 import axios from 'axios';
 import api from "./api/axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Routes, Route } from "react-router";
+import { useNavigate } from "react-router";
 import {
   faHouse,
   faStar,
@@ -21,9 +21,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import Section from "./components/Section";
-import MovieDetail from "./components/MovieDetail";
 import SearchHeader from "./components/SearchHeader";
-import MovieListPage from "./pages/MovieListPage";
 
 
 
@@ -35,6 +33,7 @@ export default function App() {
   const [comedyMovies, setComedyMovies] = useState([]);
   const [actionMovies, setActionMovies] = useState([]);
   const [romanceMovies, setRomanceMovies] = useState([]);
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState('multi');
 
   const searchTypes = [
@@ -106,35 +105,23 @@ export default function App() {
     )
   }
   return (
-    <>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <main className="pt-16 bg-black text-white">
-                <VideoHero />
-                {/* 검색 타입 그리드 + 검색 인풋 */}
-                <SearchHeader />
-                <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleTo="/movies/popular" />
-                <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleTo="/movies/upcoming" />
-                <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/top_rated" />
-                <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-35" />
-                <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-28" />
-                <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-10749" />
-              </main>
-            </>
-          }
-        />
-        <Route path="/movies/:type" element={<MovieListPage />} />
-        <Route path="/movie/:id" element={<MovieDetail />} />
-      </Routes>
-    </>
+    <main className="pt-16 bg-black text-white">
+      <VideoHero />
+      {/* 검색 타입 그리드 + 검색 인풋 */}
+      <SearchHeader />
+      <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleTo="/movies/popular" />
+      <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleTo="/movies/upcoming" />
+      <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} titleTo="/movies/top_rated" />
+      <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-35" />
+      <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-28" />
+      <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-10749" />
+    </main>
   )
 }
 
 function VideoHero() {
   const [movieDataList, setMovieDataList] = useState([]);
+  const navigate = useNavigate();
 
   const slides = [
     {
@@ -239,22 +226,22 @@ function VideoHero() {
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className='absolute top-0 left-0 w-full h-full object-cover'
+                  className='absolute top-0 left-0 w-full h-full object-cover object-center md:object-center'
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
-              <div className="relative z-10 flex-col flex justify-center h-full pl-45">
+              <div className="relative z-10 flex-col flex justify-center h-full px-4 pl-6 md:pl-16 lg:pl-45">
                 <div className="max-w-none">
-                  <h2 className="text-2xl md:text-7xl font-bold mb-6 text-[fffcf2] text-left font-pretendard">
+                  <h2 className="text-2xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-6 text-[fffcf2] text-left font-pretendard">
                     {slide.title}
                   </h2>
                   {slide.subtitle ? (
-                    <p className="text-xl md:text-xl mb-8 text-[#fffcf2] text-left font-pretendard">
+                    <p className="text-xl md:text-xl mb-4 md:mb-8 text-[#fffcf2] text-left font-pretendard">
                       {slide.subtitle}
                     </p>
                   ) : movieDataList[index] ? (
                     // 영화 슬라이드 - API 데이터 표시
-                    <div className="flex items-center gap-4 mb-8 text-[#fffcf2] text-xl font-pretendard">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-8 text-[#fffcf2] text-sm md:text-lg lg:text-xl font-pretendard">
                       <span className="flex items-center gap-1">
                         <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
                         {movieDataList[index].vote_average.toFixed(1)}
@@ -264,7 +251,7 @@ function VideoHero() {
                     </div>
                   ) : (
                     // 로딩 중 표시
-                    <div className="flex items-center gap-4 mb-8 text-[#fffcf2] text-xl font-pretendard">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-8 text-[#fffcf2] text-sm md:text-lg lg:text-xl font-pretendard">
                       <span className="flex items-center gap-1">
                         <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
                         로딩중...
@@ -273,7 +260,14 @@ function VideoHero() {
                       <span>• 로딩중...</span>
                     </div>
                   )}
-                  <button className="bg-[#e25555] hover:bg-[#d40000] hover:text-white text-white px-5 py-3 rounded-lg text-[15px] font-bold transition-colors duration-300 font-pretendard">
+                  <button
+                    onClick={() => {
+                      if (index > 0 && movieDataList[index] && movieDataList[index].id) {
+                        navigate(`/movie/${movieDataList[index].id}`);
+                      }
+                    }}
+                    className="bg-[#e25555] hover:bg-[#d40000] hover:text-white text-white px-4 py-2 md:px-5 md:py-3 rounded-lg text-sm md:text-[15px] font-bold transition-colors duration-300 font-pretendard"
+                  >
                     {slide.buttonText}
                   </button>
                 </div>

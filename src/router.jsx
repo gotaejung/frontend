@@ -7,6 +7,7 @@ import MyPage from "./components/MyPage";
 import LoginPage from "./components/LoginPage";
 import KakaoCallback from "./components/KakaoCallback";
 import NaverCallback from "./components/NaverCallback";
+import MovieListPage from "./pages/MovieListPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "movie/:id",
         element: <MovieDetail />,
+      },
+      {
+        path: "movies/:type",
+        element: <MovieListPage />,
       },
       {
         path: "search",

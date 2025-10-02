@@ -26,7 +26,7 @@ export default function Card({ movie, orientation = "vertical", index }) {
           <div className="flex-1 p-3 flex flex-col justify-center">
             <h4 className="font-bold text-base mb-2 line-clamp-2">{movie.title}</h4>
             <div className="flex items-center gap-2 text-sm">
-              <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+              <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
               <span className="text-[#fff7df] font-bold">{movie.vote_average?.toFixed(1)}</span>
             </div>
             {movie.release_date && (
@@ -49,14 +49,14 @@ export default function Card({ movie, orientation = "vertical", index }) {
     return (
       <Link to={`/movie/${movie.id}`} className="block group">
         <div className="flex gap-3 items-start">
-          {/* 순위 숫자 */}
+          {/* 순위 숫자
           {index !== undefined && (
             <div className="flex-shrink-0 mt-4">
               <div className="flex items-center justify-center text-4xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
                 {index + 1}
               </div>
             </div>
-          )}
+          )} */}
           <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
 
             {/* 포스터 이미지 */}
@@ -86,31 +86,31 @@ export default function Card({ movie, orientation = "vertical", index }) {
   if (orientation === "horizontal") {
     return (
       <Link to={`/movie/${movie.id}`} className="block group">
-        
+
         <div className="flex gap-3 items-start">
-          {index !== undefined && (
+          {/* {index !== undefined && (
             <div className="flex-shrink-0 mt-4">
               <div className="flex items-center justify-center text-4xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)] animate-pulse">
                 {index + 1}
               </div>
             </div>
-          )}
+          )} */}
           <div className="rounded-lg overflow-hidden bg-neutral-800 flex-1">
             {/* 포스터 이미지 */}
             <img
               src={img}
               alt={movie.title}
-              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"/>
+              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" />
 
             {/* 컨텐츠 영역 */}
             <div className="p-3">
               <h4 className="font-bold text-lg mb-2 truncate">{movie.title}</h4>
-                <div className="flex justify-between items-center text-sm text-gray-200">
-                  <span className="flex items-center gap-2 font-bold">
-                    <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                    <span className="text-[#fff7df]">{rating}</span>
-                    <span className="text-[#fff7df] font-bold">{movie.release_date}</span>
-                  </span>
+              <div className="flex justify-between items-center text-sm text-gray-200">
+                <span className="flex items-center gap-2 font-bold">
+                  <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                  <span className="text-[#fff7df]">{rating}</span>
+                  <span className="text-[#fff7df] font-bold">{movie.release_date}</span>
+                </span>
               </div>
             </div>
           </div>
