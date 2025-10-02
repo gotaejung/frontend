@@ -1,9 +1,10 @@
 import axios from 'axios';
 import api from "./api/axios";
-import { Link, useNavigate } from "react-router";
+import { Route, Routes, Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHouse,
+  faStar,
   faMagnifyingGlass,
   faFilm,
   faUsers,
@@ -14,11 +15,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 import Section from "./components/Section";
+import MovieDetail from "./components/MovieDetail";
 
 
 
@@ -94,53 +97,63 @@ export default function App() {
   }
   return (
     <>
-      <VideoHero />
-      {/* 검색 타입 그리드 + 검색 인풋 */}
-      <div className="container mx-auto px-4 py-4 md:py-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
-          {searchTypes.map((type) => (
-            <button
-              key={type.value}
-              onClick={() => {
-                setSelectedType(type.value);
-                navigate(`/search?type=${type.value}`);
-              }}
-              className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
-                  ? 'bg-amber-500 text-black'
-                  : 'bg-gray-800 text-white hover:bg-gray-700'
-                }`}
-            >
-              <span className="block text-base md:text-lg">
-                <FontAwesomeIcon icon={type.icon} />
-              </span>
-              <span className="text-xs">{type.label}</span>
-            </button>
-          ))}
-        </div>
+      <main className="pt-16 bg-black text-white">
+        <Routes>
+          <Route path="/" element={
+            <>
+              <VideoHero />
+              {/* 검색 타입 그리드 + 검색 인풋 */}
+              <div className="container mx-auto px-4 py-4 md:py-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
+                  {searchTypes.map((type) => (
+                    <button
+                      key={type.value}
+                      onClick={() => {
+                        setSelectedType(type.value);
+                        navigate(`/search?type=${type.value}`);
+                      }}
+                      className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
+                        ? 'bg-amber-500 text-black'
+                        : 'bg-gray-800 text-white hover:bg-gray-700'
+                        }`}
+                    >
+                      <span className="block text-base md:text-lg">
+                        <FontAwesomeIcon icon={type.icon} />
+                      </span>
+                      <span className="text-xs">{type.label}</span>
+                    </button>
+                  ))}
+                </div>
 
-        <div className="relative max-w-3xl">
-          <input
-            type="text"
-            placeholder="영화 검색..."
-            readOnly
-            onFocus={() => navigate(`/search?type=${selectedType}`)}
-            onClick={() => navigate(`/search?type=${selectedType}`)}
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
-          />
-        </div>
-      </div>
-      <Section title="내가 좋아할 만한 영화" items={nowPlaying} m_v={2} p_v={6} />
-      <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} orientation="horizontal" />
-      <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
-      <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
-      <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} />
-      <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-      <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} />
+                <div className="relative max-w-3xl">
+                  <input
+                    type="text"
+                    placeholder="영화 검색..."
+                    readOnly
+                    onFocus={() => navigate(`/search?type=${selectedType}`)}
+                    onClick={() => navigate(`/search?type=${selectedType}`)}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
+                  />
+                </div>
+              </div>
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
+              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
+              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
+            </>
+          } />
+          <Route path='/movie/:id' element={<MovieDetail />} />
+        </Routes>
+      </main>
     </>
   )
 }
 
 function VideoHero() {
+  const [movieDataList, setMovieDataList] = useState([]);
+
   const slides = [
     {
       title: "POPCORN PLAY",
@@ -149,72 +162,80 @@ function VideoHero() {
       video: "video_popcornplay.mp4"
     },
     {
-      title: "액션 무비 월드",
-      subtitle: "스릴 넘치는 액션 영화의 세계로!",
-      buttonText: "액션 영화 보기",
-      image: "poster3.svg"
-    },
-    {
-      title: "로맨틱 시네마",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "로맨스 영화 보기",
-      image: "poster2.svg"
-    },
-    {
       title: "케이팝 데몬 헌터스 (2025)",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      searchTitle: "케이팝 데몬 헌터스",
       buttonText: "팝콘플레이 시작하기",
       image: "image1.svg"
     },
     {
       title: "사마귀",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      searchTitle: "사마귀",
       buttonText: "팝콘플레이 시작하기",
       image: "image2.svg"
     },
     {
-      title: "컨저링:마지막 의식",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      title: "컨저링:마지막의식",
+      searchTitle: "컨저링 마지막 의식",
       buttonText: "팝콘플레이 시작하기",
       image: "image3.svg"
     },
     {
       title: "노바디2",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      searchTitle: "노바디2",
       buttonText: "팝콘플레이 시작하기",
       image: "image4.svg"
     },
     {
-      title: "F1 더 무비",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
+      title: "아바타: 물의 길 (2022)",
+      searchTitle: "Avatar The Way of Water",
       buttonText: "팝콘플레이 시작하기",
       image: "image5.svg"
     },
-    {
-      title: "모아나2",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image6.svg"
-    },
-    {
-      title: "극장판 귀멸의 칼날: 무한성편",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image7.svg"
-    },
-    {
-      title: "아바타:물의 길",
-      subtitle: "감동적인 러브 스토리와 함께하세요.",
-      buttonText: "팝콘플레이 시작하기",
-      image: "image8.svg"
-    }
   ];
+
+    useEffect(() => {
+    const fetchAllMovieData = async () => {
+      try {
+        const moviePromises = slides.map(async (slide) => {
+          try {
+            // 1단계: 영화 제목으로 검색
+            const searchResponse = await axios.get(
+              `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${slide.searchTitle}&language=ko-KR`
+            );
+            
+            if (searchResponse.data.results.length > 0) {
+              const movieId = searchResponse.data.results[0].id;
+              
+              // 2단계: 영화 상세 정보 가져오기
+              const detailResponse = await axios.get(
+                `https://api.themoviedb.org/3/movie/${movieId}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`
+              );
+              
+              return detailResponse.data;
+            }
+            return null;
+          } catch (error) {
+            console.error(`영화 "${slide.searchTitle}" 정보 로드 실패:`, error);
+            return null;
+          }
+        });
+        
+        const results = await Promise.all(moviePromises);
+        setMovieDataList(results);
+      } catch (error) {
+        console.error('영화 정보 로드 실패:', error);
+      }
+    };
+    
+    fetchAllMovieData();
+  }, []);
 
   return (
     <section className="relative h-screen overflow-hidden">
       <Swiper
-        modules={[Navigation, Autoplay]}
+        modules={[Navigation, Pagination, Autoplay]}
         navigation
+        pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         loop={true}
         className="w-full h-full"
@@ -239,17 +260,41 @@ function VideoHero() {
                   className='absolute top-0 left-0 w-full h-full object-cover'
                 />
               )}
-              <div className="absolute inset-0 bg-black/50"></div>
-              <div className="relative z-10 flex-col flex items-center justify-center h-full">
-                <h2 className="text-5xl md:text-7xl font-bold mb-6 text-amber-100">
-                  {slide.title}
-                </h2>
-                <p className="text-xl md:text-2xl mb-8 max-w-2xl text-amber-100 text-center">
-                  {slide.subtitle}
-                </p>
-                <button className="bg-amber-100 hover:bg-amber-500 hover:text-white text-black px-8 py-4 rounded-lg text-lg font-bold transition-colors duration-300">
-                  {slide.buttonText}
-                </button>
+                     <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
+              <div className="relative z-10 flex-col flex justify-center h-full pl-45">
+                <div className="max-w-none">
+                  <h2 className="text-2xl md:text-7xl font-bold mb-6 text-[fffcf2] text-left font-pretendard">
+                    {slide.title}
+                  </h2>
+                  {slide.subtitle ? (
+                    <p className="text-xl md:text-xl mb-8 text-[#fffcf2] text-left font-pretendard">
+                      {slide.subtitle}
+                    </p>
+                  ) : movieDataList[index] ? (
+                    // 영화 슬라이드 - API 데이터 표시
+                    <div className="flex items-center gap-4 mb-8 text-[#fffcf2] text-xl font-pretendard">
+                      <span className="flex items-center gap-1">
+                        <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                        {movieDataList[index].vote_average.toFixed(1)}
+                      </span>
+                      <span>• {movieDataList[index].runtime}분</span>
+                      <span>• {movieDataList[index].genres.map(g => g.name).join(', ')}</span>
+                    </div>
+                  ) : (
+                    // 로딩 중 표시
+                    <div className="flex items-center gap-4 mb-8 text-[#fffcf2] text-xl font-pretendard">
+                      <span className="flex items-center gap-1">
+                        <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                        로딩중...
+                      </span>
+                      <span>• 로딩중...</span>
+                      <span>• 로딩중...</span>
+                    </div>
+                  )}
+                  <button className="bg-[#e25555] hover:bg-[#d40000] hover:text-white text-white px-5 py-3 rounded-lg text-[15px] font-bold transition-colors duration-300 font-pretendard">
+                    {slide.buttonText}
+                  </button>
+                </div>
               </div>
             </div>
           </SwiperSlide>

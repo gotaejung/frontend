@@ -1,7 +1,8 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 import Card from "./Card";
 export default function Section({ title, items, m_v, p_v, orientation = "vertical" }) {
@@ -11,7 +12,7 @@ export default function Section({ title, items, m_v, p_v, orientation = "vertica
         <h2 className="text-xl md:text-[32px] font-bold mb-4 md:mb-6">{title}</h2>
 
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
           slidesPerView={1}
           spaceBetween={10}
           navigation
