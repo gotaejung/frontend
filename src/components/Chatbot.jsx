@@ -50,12 +50,12 @@ export default function ChatBot() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-amber-100 text-black rounded-full shadow-lg z-50 flex items-center justify-center hover:bg-amber-500 transition-colors duration-300"
+        className="fixed bottom-1 right-6 w-30 h-30 z-50 flex items-center justify-center transition-colors duration-300"
       >
         <img 
           src="/chatbot.svg" 
           alt="Chatbot" 
-          className="w-8 h-8"
+          className="w-30 h-30"
         />
       </button>
 
