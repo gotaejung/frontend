@@ -1,6 +1,6 @@
 import axios from 'axios';
 import api from "./api/axios";
-import { Route, Routes, Link, useNavigate } from "react-router";
+import { Route, Routes, useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHouse,
@@ -22,6 +22,8 @@ import 'swiper/css/pagination';
 
 import Section from "./components/Section";
 import MovieDetail from "./components/MovieDetail";
+import SearchHeader from "./components/SearchHeader";
+import MovieListPage from "./pages/MovieListPage";
 
 
 
@@ -102,48 +104,16 @@ export default function App() {
           <Route path="/" element={
             <>
               <VideoHero />
-              {/* 검색 타입 그리드 + 검색 인풋 */}
-              <div className="container mx-auto px-4 py-4 md:py-6">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 md:mb-6">
-                  {searchTypes.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() => {
-                        setSelectedType(type.value);
-                        navigate(`/search?type=${type.value}`);
-                      }}
-                      className={`px-2 md:px-3 py-2 rounded-lg font-medium transition-colors text-xs md:text-sm ${selectedType === type.value
-                        ? 'bg-amber-500 text-black'
-                        : 'bg-gray-800 text-white hover:bg-gray-700'
-                        }`}
-                    >
-                      <span className="block text-base md:text-lg">
-                        <FontAwesomeIcon icon={type.icon} />
-                      </span>
-                      <span className="text-xs">{type.label}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="relative max-w-3xl">
-                  <input
-                    type="text"
-                    placeholder="영화 검색..."
-                    readOnly
-                    onFocus={() => navigate(`/search?type=${selectedType}`)}
-                    onClick={() => navigate(`/search?type=${selectedType}`)}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer text-sm md:text-base"
-                  />
-                </div>
-              </div>
-              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} />
-              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} />
-              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" />
-              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" />
+              <SearchHeader selectedType={selectedType} onTypeChange={setSelectedType} />
+              <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleLinkTo="/movies/popular" />
+              <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleLinkTo="/movies/upcoming" />
+              <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} orientation="horizontal" titleLinkTo="/movies/top_rated" />
+              <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleLinkTo="/movies/genre-35" />
+              <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleLinkTo="/movies/genre-28" />
+              <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" titleLinkTo="/movies/genre-10749" />
             </>
           } />
+          <Route path="/movies/:type" element={<MovieListPage />} />
           <Route path='/movie/:id' element={<MovieDetail />} />
         </Routes>
       </main>
