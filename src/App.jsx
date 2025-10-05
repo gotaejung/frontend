@@ -162,16 +162,16 @@ export default function App() {
         <div className="container mx-auto px-4 py-12">
           {/* 소셜 미디어 섹션 */}
           <div className="flex justify-start space-x-8 mb-8 pb-6">
-            <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors duration-300 transform hover:scale-110">
+            <a href="#" className="text-gray-100 hover:text-blue-500 transition-colors duration-300 transform hover:scale-110">
               <FontAwesomeIcon icon={faFacebookF} className="text-2xl" />
             </a>
-            <a href="#" className="text-gray-400 hover:text-pink-500 transition-colors duration-300 transform hover:scale-110">
+            <a href="#" className="text-gray-100 hover:text-pink-500 transition-colors duration-300 transform hover:scale-110">
               <FontAwesomeIcon icon={faInstagram} className="text-2xl" />
             </a>
-            <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110">
+            <a href="#" className="text-gray-100 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110">
               <FontAwesomeIcon icon={faXTwitter} className="text-2xl" />
             </a>
-            <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-300 transform hover:scale-110">
+            <a href="#" className="text-gray-100 hover:text-red-500 transition-colors duration-300 transform hover:scale-110">
               <FontAwesomeIcon icon={faYoutube} className="text-2xl" />
             </a>
           </div>
@@ -180,28 +180,28 @@ export default function App() {
           <div className="mb-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4 text-center md:text-left">
               {/* 1행 */}
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">화면해설</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">고객센터</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">기프트카드</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">미디어센터</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">화면해설</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">고객센터</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">기프트카드</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">미디어센터</a>
               
               {/* 2행 */}
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">투자정보(IR)</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">입사정보</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">이용약관</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">개인정보</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">투자정보(IR)</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">입사정보</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">이용약관</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">개인정보</a>
               
               {/* 3행 */}
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">법적고지</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">쿠키설정</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">회사정보</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">문의하기</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">법적고지</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">쿠키설정</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">회사정보</a>
+              <a href="#" className="text-gray-100 hover:text-white transition-colors text-sm">문의하기</a>
             </div>
           </div>
 
           {/* 푸터 하단 - 회사 정보 */}
           <div className="pt-6">
-            <div className="text-gray-400 text-xs leading-relaxed space-y-2">
+            <div className="text-gray-100 text-xs leading-relaxed space-y-2">
               <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
                 <span>주식회사 팝콘플레이</span>
                 <span className="hidden md:inline">|</span>
