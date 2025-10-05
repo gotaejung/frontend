@@ -45,13 +45,12 @@ const KakaoLogin = () => {
   };
 
   return (
-    <button
+    <img
+      src="/kakao_login.svg"
+      alt="카카오 로그인"
       onClick={handleKakaoLogin}
-      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-4 rounded-lg font-bold transition-colors duration-300 flex items-center justify-center gap-3 text-lg"
-    >
-      <span>💬</span>
-      카카오 로그인
-    </button>
+      className="w-full cursor-pointer hover:opacity-80 transition-opacity duration-300"
+    />
   );
 };
 

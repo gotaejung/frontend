@@ -25,15 +25,17 @@ export default function Card({ movie, orientation = "vertical", index }) {
           {/* 컨텐츠 영역 */}
           <div className="flex-1 p-3 flex flex-col justify-center">
             <h4 className="font-bold text-base mb-2 line-clamp-2">{movie.title}</h4>
-            <div className="flex items-center gap-2 text-sm">
-              <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-              <span className="text-[#fff7df] font-bold">{movie.vote_average?.toFixed(1)}</span>
-            </div>
-            {movie.release_date && (
-              <div className="text-xs text-gray-400 mt-1">
-                {movie.release_date}
+            <div className="flex justify-between items-center text-sm">
+              <div className="flex items-center gap-2">
+                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                <span className="text-[#fff7df] font-bold">{movie.vote_average?.toFixed(1)}</span>
               </div>
-            )}
+              {movie.release_date && (
+                <div className="text-xs text-gray-400">
+                  {movie.release_date}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Link>
@@ -69,11 +71,13 @@ export default function Card({ movie, orientation = "vertical", index }) {
             <div className="p-3">
               <h4 className="font-bold text-lg mb-2 truncate">{movie.title}</h4>
               <div className="flex justify-between items-center text-sm text-gray-200">
-                <span className="flex items-center gap-2 font-bold">
+                <div className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
                   <span className="text-[#fff7df]">{rating}</span>
-                  <span className="text-[#fff7df] font-bold">{movie.release_date}</span>
-                </span>
+                </div>
+                <div className="text-[#fff7df]">
+                  {movie.release_date}
+                </div>
               </div>
             </div>
           </div>
@@ -106,11 +110,13 @@ export default function Card({ movie, orientation = "vertical", index }) {
             <div className="p-3">
               <h4 className="font-bold text-lg mb-2 truncate">{movie.title}</h4>
               <div className="flex justify-between items-center text-sm text-gray-200">
-                <span className="flex items-center gap-2 font-bold">
+                <div className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
                   <span className="text-[#fff7df]">{rating}</span>
-                  <span className="text-[#fff7df] font-bold">{movie.release_date}</span>
-                </span>
+                </div>
+                <div className="text-[#fff7df]">
+                  {movie.release_date}
+                </div>
               </div>
             </div>
           </div>

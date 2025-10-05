@@ -23,7 +23,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function MyPage() {
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('account');
 
   const menuData = {
     account: {
@@ -78,7 +78,7 @@ export default function MyPage() {
   };
 
   const handleCategoryClick = (category) => {
-    setActiveCategory(activeCategory === category ? null : category);
+    setActiveCategory(category);
   };
 
   const handleItemClick = (categoryId, itemId) => {
@@ -87,114 +87,98 @@ export default function MyPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-8">
+    <div className="pt-20 min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-900">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* 헤더 */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-amber-100">마이 페이지</h1>
-          <p className="text-gray-400 text-lg">계정 설정 및 서비스 관리</p>
+          <h1 className="text-4xl font-bold mb-2 text-gray-900">마이 페이지</h1>
+          <p className="text-gray-600 text-lg">계정 설정 및 서비스 관리</p>
         </div>
 
-        {/* 사용자 정보 카드 */}
-        <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-2xl p-6 mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center">
-              <FontAwesomeIcon icon={faUser} className="text-2xl text-black" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-amber-100">사용자님</h2>
-              <p className="text-amber-200/80">프리미엄 멤버</p>
-              <p className="text-sm text-gray-400">가입일: 2024.01.15</p>
+        {/* 메인 레이아웃 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* 좌측 메뉴 섹션 */}
+          <div className="lg:col-span-1">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">메뉴</h3>
+              <div className="space-y-2">
+                {Object.entries(menuData).map(([categoryId, category]) => (
+                  <button
+                    key={categoryId}
+                    onClick={() => setActiveCategory(categoryId)}
+                    className={`w-full p-4 flex items-center space-x-4 transition-all duration-300 text-left border-l-4 ${
+                      activeCategory === categoryId 
+                        ? 'border-blue-500 bg-blue-50/50' 
+                        : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-xl ${category.bgColor} border ${category.borderColor} flex items-center justify-center`}>
+                      <FontAwesomeIcon icon={category.icon} className={`text-lg ${category.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900">{category.title}</h4>
+                    </div>
+                    <FontAwesomeIcon 
+                      icon={faChevronRight} 
+                      className={`text-gray-400 transition-transform duration-300 ${
+                        activeCategory === categoryId ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 메뉴 섹션 */}
-        <div className="grid gap-6">
-          {Object.entries(menuData).map(([categoryId, category]) => (
-            <div key={categoryId} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden">
-              {/* 카테고리 헤더 */}
-              <button
-                onClick={() => handleCategoryClick(categoryId)}
-                className={`w-full p-6 flex items-center justify-between transition-all duration-300 hover:bg-gray-800/50 ${
-                  activeCategory === categoryId ? category.bgColor : ''
-                }`}
-              >
-                <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-xl ${category.bgColor} ${category.borderColor} border flex items-center justify-center`}>
-                    <FontAwesomeIcon icon={category.icon} className={`text-xl ${category.color}`} />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-xl font-semibold text-white">{category.title}</h3>
-                    <p className="text-sm text-gray-400">{category.items.length}개 항목</p>
-                  </div>
+          {/* 우측 콘텐츠 섹션 */}
+          <div className="lg:col-span-2">
+            <div className="p-6 min-h-[500px]">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className={`w-16 h-16 rounded-xl ${menuData[activeCategory].bgColor} border ${menuData[activeCategory].borderColor} flex items-center justify-center`}>
+                  <FontAwesomeIcon icon={menuData[activeCategory].icon} className={`text-2xl ${menuData[activeCategory].color}`} />
                 </div>
-                <FontAwesomeIcon 
-                  icon={activeCategory === categoryId ? faChevronDown : faChevronRight} 
-                  className={`text-lg transition-transform duration-300 ${category.color}`}
-                />
-              </button>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900">{menuData[activeCategory].title}</h2>
+                </div>
+              </div>
 
-              {/* 서브메뉴 */}
-              <div className={`transition-all duration-300 overflow-hidden ${
-                activeCategory === categoryId ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-              }`}>
-                <div className="border-t border-gray-800">
-                  {category.items.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => handleItemClick(categoryId, item.id)}
-                      className="w-full p-4 flex items-center space-x-4 hover:bg-gray-800/30 transition-colors duration-200 border-b border-gray-800/50 last:border-b-0"
-                    >
-                      <div className={`w-10 h-10 rounded-lg ${category.bgColor} ${category.borderColor} border flex items-center justify-center`}>
-                        <FontAwesomeIcon icon={item.icon} className={`text-sm ${category.color}`} />
+              <div className="space-y-4">
+                {menuData[activeCategory].items.map((item, index) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleItemClick(activeCategory, item.id)}
+                    className="w-full p-5 hover:bg-gray-50 transition-all duration-300 text-left group border-l-4 border-transparent hover:border-blue-500/50"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 rounded-xl ${menuData[activeCategory].bgColor} border ${menuData[activeCategory].borderColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                        <FontAwesomeIcon icon={item.icon} className={`text-lg ${menuData[activeCategory].color}`} />
                       </div>
-                      <div className="flex-1 text-left">
-                        <h4 className="font-medium text-white">{item.title}</h4>
-                        <p className="text-sm text-gray-400">{item.description}</p>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600 transition-colors duration-300">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                          {item.description}
+                        </p>
                       </div>
                       <FontAwesomeIcon 
                         icon={faChevronRight} 
-                        className="text-gray-500 text-sm"
+                        className="text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" 
                       />
-                    </button>
-                  ))}
-                </div>
+                    </div>
+                  </button>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 하단 정보 */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="bg-gray-900/30 p-6 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2 text-amber-100">서비스 이용</h3>
-              <p className="text-3xl font-bold text-amber-400 mb-2">156</p>
-              <p className="text-sm text-gray-400">시청한 영화</p>
-            </div>
-            <div className="bg-gray-900/30 p-6 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2 text-amber-100">찜한 콘텐츠</h3>
-              <p className="text-3xl font-bold text-amber-400 mb-2">24</p>
-              <p className="text-sm text-gray-400">저장된 영화</p>
-            </div>
-            <div className="bg-gray-900/30 p-6 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2 text-amber-100">작성한 리뷰</h3>
-              <p className="text-3xl font-bold text-amber-400 mb-2">8</p>
-              <p className="text-sm text-gray-400">총 리뷰 수</p>
             </div>
           </div>
         </div>
 
-        {/* 빠른 액션 버튼들 */}
-        <div className="mt-8 flex flex-wrap gap-4 justify-center">
-          <button className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition-colors">
+        <div className="mt-16 flex flex-wrap gap-4 justify-center">
+          <button className="px-6 py-3 bg-gray-700 text-white hover:bg-amber-100 hover:text-gray-900 font-normal rounded-lg transition-colors shadow-md text-sm">
             프로필 편집
           </button>
-          <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors">
-            멤버십 업그레이드
-          </button>
-          <button className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors">
+          <button className="px-6 py-3 bg-gray-700 hover:bg-red-600 text-white font-normal rounded-lg transition-colors shadow-md text-sm">
             로그아웃
           </button>
         </div>

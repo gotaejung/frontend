@@ -8,6 +8,7 @@ import LoginPage from "./components/LoginPage";
 import KakaoCallback from "./components/KakaoCallback";
 import NaverCallback from "./components/NaverCallback";
 import MovieListPage from "./pages/MovieListPage";
+import TrailerListPage from "./pages/TrailerListPage";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "movies/:type",
         element: <MovieListPage />,
+      },
+      {
+        path: "trailers",
+        element: <TrailerListPage />,
       },
       {
         path: "search",

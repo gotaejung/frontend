@@ -59,13 +59,12 @@ const NaverLogin = () => {
       <div ref={naverRef} id="naverIdLogin" style={{ display: 'none' }}></div>
       
       {/* 커스텀 로그인 버튼 */}
-      <button
+      <img
+        src="/naver_login.svg"
+        alt="네이버 로그인"
         onClick={handleNaverLogin}
-        className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-lg font-bold transition-colors duration-300 flex items-center justify-center gap-3 text-lg"
-      >
-        <span>🔗</span>
-        네이버 로그인
-      </button>
+        className="w-full cursor-pointer hover:opacity-80 transition-opacity duration-300"
+      />
     </div>
   );
 };

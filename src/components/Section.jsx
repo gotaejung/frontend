@@ -12,35 +12,31 @@ export default function Section({ title, titleTo, items, m_v, p_v, orientation =
     <section className="bg-black py-6 md:py-10 px-4">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between mb-4">
-          
           {titleTo ? (
-            <Link to={titleTo} className="text-2xl md:text-4xl font-bold hover:underline mb-4 md:mb-6">
+            <Link to={titleTo} className="text-2xl md:text-4xl font-bold hover:underline">
               {title}
             </Link>
           ) : (
             <h2 className="text-2xl md:text-4xl font-bold">{title}</h2>
           )}
         </div>
-      </div>
-
-      <div className="container mx-auto px-4 md:px-6">
         <Swiper
           modules={[Navigation, Pagination]}
           slidesPerView={1}
-          spaceBetween={10}
+          spaceBetween={8}
           navigation
           breakpoints={{
             640: {
               slidesPerView: 2,
-              spaceBetween: 20,
+              spaceBetween: 12,
             },
             768: {
               slidesPerView: 4,
-              spaceBetween: 40,
+              spaceBetween: 16,
             },
             1024: {
               slidesPerView: orientation === 'horizontal' ? 4 : 6,
-              spaceBetween: 50,
+              spaceBetween: 20,
             },
           }}
         >

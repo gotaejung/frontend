@@ -13,9 +13,16 @@ import {
   faTag,
   // faTv, // TV 사용 시 주석 해제
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFacebookF,
+  faInstagram,
+  faXTwitter,
+  faYoutube
+} from '@fortawesome/free-brands-svg-icons';
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Link } from 'react-router';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -33,6 +40,7 @@ export default function App() {
   const [comedyMovies, setComedyMovies] = useState([]);
   const [actionMovies, setActionMovies] = useState([]);
   const [romanceMovies, setRomanceMovies] = useState([]);
+  const [trailerMovies, setTrailerMovies] = useState([]);
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState('multi');
 
@@ -65,6 +73,32 @@ export default function App() {
         // 로맨스 영화 (장르 ID: 10749)
         const romance = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&with_genres=10749&language=ko-KR&include_adult=false&certification_country=KR&certification.lte=15`)
 
+        // 트레일러가 있는 인기 영화들 가져오기
+        const trailerMovies = [];
+        for (const movie of po.data.results.slice(0, 10)) {
+          try {
+            const videosRes = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`);
+            let videos = videosRes.data.results;
+            
+            // 한국어 영상이 없으면 영어로 대체
+            if (!videos || videos.length === 0) {
+              const enVideosRes = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`);
+              videos = enVideosRes.data.results;
+            }
+            
+            const trailer = videos.find(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
+            if (trailer) {
+              trailerMovies.push({
+                ...movie,
+                trailer_key: trailer.key,
+                trailer_name: trailer.name
+              });
+            }
+          } catch (error) {
+            console.error(`영화 ${movie.title}의 트레일러 로드 실패:`, error);
+          }
+        }
+
         setNowPlaying(np.data.results.filter(movie => movie.poster_path))
         setPopular(po.data.results.filter(movie => movie.poster_path))
         setUpComing(up.data.results.filter(movie => movie.poster_path))
@@ -72,6 +106,7 @@ export default function App() {
         setComedyMovies(comedy.data.results.filter(movie => movie.poster_path))
         setActionMovies(action.data.results.filter(movie => movie.poster_path))
         setRomanceMovies(romance.data.results.filter(movie => movie.poster_path))
+        setTrailerMovies(trailerMovies)
 
       }
       catch (err) {
@@ -109,12 +144,99 @@ export default function App() {
       <VideoHero />
       {/* 검색 타입 그리드 + 검색 인풋 */}
       <SearchHeader />
+      
+      {/* 트레일러 섹션 */}
+      {trailerMovies.length > 0 && (
+        <TrailerSection trailers={trailerMovies} />
+      )}
+      
       <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleTo="/movies/popular" />
       <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleTo="/movies/upcoming" />
       <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} titleTo="/movies/top_rated" />
       <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-35" />
       <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-28" />
       <Section title="다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스" items={romanceMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-10749" />
+
+      {/* 푸터 */}
+      <footer className="bg-black text-white mt-16">
+        <div className="container mx-auto px-4 py-12">
+          {/* 소셜 미디어 섹션 */}
+          <div className="flex justify-start space-x-8 mb-8 pb-6">
+            <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors duration-300 transform hover:scale-110">
+              <FontAwesomeIcon icon={faFacebookF} className="text-2xl" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-pink-500 transition-colors duration-300 transform hover:scale-110">
+              <FontAwesomeIcon icon={faInstagram} className="text-2xl" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110">
+              <FontAwesomeIcon icon={faXTwitter} className="text-2xl" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-300 transform hover:scale-110">
+              <FontAwesomeIcon icon={faYoutube} className="text-2xl" />
+            </a>
+          </div>
+
+          {/* 푸터 메인 콘텐츠 - 3행 4열 그리드 */}
+          <div className="mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4 text-center md:text-left">
+              {/* 1행 */}
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">화면해설</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">고객센터</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">기프트카드</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">미디어센터</a>
+              
+              {/* 2행 */}
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">투자정보(IR)</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">입사정보</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">이용약관</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">개인정보</a>
+              
+              {/* 3행 */}
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">법적고지</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">쿠키설정</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">회사정보</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">문의하기</a>
+            </div>
+          </div>
+
+          {/* 푸터 하단 - 회사 정보 */}
+          <div className="pt-6">
+            <div className="text-gray-400 text-xs leading-relaxed space-y-2">
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span>주식회사 팝콘플레이</span>
+                <span className="hidden md:inline">|</span>
+                <span>통신판매업신고번호: 제2018-서울종로-0426호</span>
+              </div>
+              
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span>전화번호: 00-00-00-00 (수신자 부담)</span>
+                <span className="hidden md:inline">|</span>
+                <span>대표: 김팝콘</span>
+              </div>
+              
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span>이메일 주소: 
+                  <a href="mailto:korea@popcornplay.com" className="hover:text-white transition-colors">
+                    korea@popcornplay.com
+                  </a>
+                </span>
+              </div>
+              
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span>주소: 서울 종로구 종로 69 (종로2가) 3층 MBC아카데미컴퓨터교육센터</span>
+              </div>
+              
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span>사업자등록번호: 000-00-00119</span>
+                <span className="hidden md:inline">|</span>
+                <a href="#" className="hover:text-white transition-colors underline">
+                  공정거래위원회 웹사이트
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
@@ -278,4 +400,128 @@ function VideoHero() {
       </Swiper>
     </section>
   )
+}
+
+function TrailerSection({ trailers }) {
+  const [selectedTrailer, setSelectedTrailer] = useState(null);
+
+  const openTrailer = (trailer) => {
+    setSelectedTrailer(trailer);
+  };
+
+  const closeTrailer = () => {
+    setSelectedTrailer(null);
+  };
+
+  return (
+    <>
+      <section className="bg-black py-6 md:py-10 px-4">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between mb-4">
+            <Link to="/trailers" className="text-2xl md:text-4xl font-bold text-white hover:underline">
+              Trailer (예고편)
+            </Link>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 md:px-6">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            slidesPerView={1}
+            spaceBetween={8}
+            navigation
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+                spaceBetween: 12,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 16,
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+              },
+            }}
+          >
+            {trailers.map((movie) => (
+              <SwiperSlide key={movie.id}>
+                <div className="group cursor-pointer" onClick={() => openTrailer(movie)}>
+                  <div className="relative rounded-lg overflow-hidden bg-neutral-800">
+                    {/* YouTube 썸네일 */}
+                    <div className="relative aspect-video">
+                      <img
+                        src={`https://img.youtube.com/vi/${movie.trailer_key}/maxresdefault.jpg`}
+                        alt={movie.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src = `https://img.youtube.com/vi/${movie.trailer_key}/hqdefault.jpg`;
+                        }}
+                      />
+                      {/* 재생 버튼 오버레이 */}
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center">
+                          <div className="w-0 h-0 border-l-[12px] border-l-white border-y-[8px] border-y-transparent ml-1"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* 영화 정보 */}
+                    <div className="p-3">
+                      <Link 
+                        to={`/movie/${movie.id}`}
+                        className="block font-bold text-lg mb-2 truncate text-white hover:text-gray-300 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {movie.title}
+                      </Link>
+                      <div className="flex justify-between items-center text-sm text-gray-200">
+                        <div className="flex items-center gap-2">
+                          <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                          <span className="text-[#fff7df]">{movie.vote_average?.toFixed(1)}</span>
+                        </div>
+                        <div className="text-[#fff7df]">
+                          {movie.release_date}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </section>
+
+      {/* 트레일러 모달 */}
+      {selectedTrailer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={closeTrailer}>
+          <div className="relative w-full max-w-4xl mx-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={closeTrailer}
+              className="absolute -top-12 right-0 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ✕
+            </button>
+            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedTrailer.trailer_key}?autoplay=1`}
+                title={selectedTrailer.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div className="mt-4 text-center">
+              <h3 className="text-white text-xl font-bold">{selectedTrailer.title}</h3>
+              <p className="text-gray-300 text-sm mt-1">{selectedTrailer.trailer_name}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+    </>
+  );
 }
