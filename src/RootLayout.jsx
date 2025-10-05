@@ -32,7 +32,7 @@ function Header() {
               className="w-6 h-6 md:w-8 md:h-8"
             />
           </Link>
-          <Link to="/My Page" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
+          <Link to="/mypage" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
             My page
           </Link>
           <Link to="/login" className="bg-amber-100 hover:bg-amber-400 text-black px-4 py-2 rounded-lg font-bold transition-colors duration-300 text-sm md:text-base">
