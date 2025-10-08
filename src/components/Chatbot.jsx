@@ -1,57 +1,63 @@
-import { useState } from 'react';
-import { chatApi } from '../api/axios';
+import { useState } from "react";
+import { chatApi } from "../api/axios";
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, text: '안녕하세요! 네이버 클로바 챗봇입니다. 무엇을 도와드릴까요?', sender: 'bot' }
+    {
+      id: 1,
+      text: "안녕하세요! 팝콘플레이 챗봇입니다. 무엇을 도와드릴까요?",
+      sender: "bot",
+    },
   ]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
-    const userMessage = { id: Date.now(), text: inputMessage, sender: 'user' };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage = { id: Date.now(), text: inputMessage, sender: "user" };
+    setMessages((prev) => [...prev, userMessage]);
     const messageToSend = inputMessage;
-    setInputMessage('');
+    setInputMessage("");
     setIsLoading(true);
 
     try {
-      console.log('챗봇 메시지 전송:', messageToSend);
-      console.log('API 엔드포인트:', chatApi.defaults.baseURL);
-      
-      const response = await chatApi.post('/chat', { message: messageToSend });
+      console.log("챗봇 메시지 전송:", messageToSend);
+      console.log("API 엔드포인트:", chatApi.defaults.baseURL);
+
+      const response = await chatApi.post("/chat", { message: messageToSend });
       const botMessage = {
         id: Date.now() + 1,
-        text: response.data.reply || '응답을 받을 수 없습니다.',
-        sender: 'bot'
+        text: response.data.reply || "응답을 받을 수 없습니다.",
+        sender: "bot",
       };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      console.error('챗봇 API 오류:', error);
-      console.error('에러 상세 정보:', {
+      console.error("챗봇 API 오류:", error);
+      console.error("에러 상세 정보:", {
         message: error.message,
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
-        url: error.config?.url
+        url: error.config?.url,
       });
-      
+
       const errorMessage = {
         id: Date.now() + 1,
-        text: `죄송합니다. 현재 챗봇 서비스에 문제가 있습니다. (오류: ${error.response?.status || 'Unknown'}) 잠시 후 다시 시도해주세요.`,
-        sender: 'bot'
+        text: `죄송합니다. 현재 챗봇 서비스에 문제가 있습니다. (오류: ${
+          error.response?.status || "Unknown"
+        }) 잠시 후 다시 시도해주세요.`,
+        sender: "bot",
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -63,11 +69,7 @@ export default function ChatBot() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-1 right-6 w-30 h-30 z-50 flex items-center justify-center transition-colors duration-300"
       >
-        <img 
-          src="/chatbot.svg" 
-          alt="Chatbot" 
-          className="w-30 h-30"
-        />
+        <img src="/chatbot.svg" alt="Chatbot" className="w-30 h-30" />
       </button>
 
       {isOpen && (
@@ -86,14 +88,20 @@ export default function ChatBot() {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[70%] px-3 py-2 rounded-lg ${message.sender === 'user'
-                    ? 'bg-yellow-500 text-black'
-                    : 'bg-gray-100 text-gray-800'
-                  }`}>
-                  <div className="text-sm leading-relaxed">
-                    {message.text}
-                  </div>
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] px-3 py-2 rounded-lg ${
+                    message.sender === "user"
+                      ? "bg-yellow-500 text-black"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  <div className="text-sm leading-relaxed">{message.text}</div>
                 </div>
               </div>
             ))}
@@ -104,8 +112,14 @@ export default function ChatBot() {
                     <span>응답 중</span>
                     <div className="flex space-x-1">
                       <div className="w-1 h-1 bg-gray-600 rounded-full animate-bounce"></div>
-                      <div className="w-1 h-1 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-1 h-1 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div
+                        className="w-1 h-1 bg-gray-600 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="w-1 h-1 bg-gray-600 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -127,7 +141,9 @@ export default function ChatBot() {
               <button
                 onClick={sendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 font-medium">전송
+                className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 font-medium"
+              >
+                전송
               </button>
             </div>
           </div>

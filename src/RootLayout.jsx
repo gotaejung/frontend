@@ -25,17 +25,30 @@ function Header() {
         </div>
 
         <div className="flex items-center space-x-3 md:space-x-6">
-          <Link to="/search" className="hover:opacity-80 transition-opacity duration-300">
-            <img 
-              src="/search.svg" 
-              alt="검색" 
+          <Link
+            to="/search"
+            className="hover:opacity-80 transition-opacity duration-300"
+          >
+            <img
+              src="/search.svg"
+              alt="검색"
               className="w-6 h-6 md:w-8 md:h-8"
             />
           </Link>
-          <Link to="/mypage" className="text-white hover:text-amber-100 transition-colors duration-300 font-bold text-sm md:text-base">
-            My page
+          <Link
+            to="/mypage"
+            className="hover:opacity-80 transition-opacity duration-300"
+          >
+            <img
+              src="/mypage.svg"
+              alt="마이페이지"
+              className="w-7 h-7 md:w-9 md:h-9"
+            />
           </Link>
-          <Link to="/login" className="bg-amber-100 hover:bg-amber-400 text-black px-4 py-2 rounded-lg font-bold transition-colors duration-300 text-sm md:text-base">
+          <Link
+            to="/login"
+            className="bg-amber-100 hover:bg-amber-400 text-black px-4 py-2 rounded-lg font-bold transition-colors duration-300 text-sm md:text-base"
+          >
             로그인
           </Link>
         </div>
