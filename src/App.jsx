@@ -176,7 +176,7 @@ export default function App() {
       
       <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleTo="/movies/popular" />
       <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleTo="/movies/upcoming" />
-      <Section title="당신이 좋아할 만한 추천 영화" items={personalizedMovies} m_v={2} p_v={6} titleTo="/movies/personalized" />
+      <Section title="당신을 위한 추천 영화" items={personalizedMovies} m_v={2} p_v={6} titleTo="/movies/personalized" />
       <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} titleTo="/movies/top_rated" />
       <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-35" />
       <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-28" />

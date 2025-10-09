@@ -13,7 +13,7 @@ export default function MovieListPage() {
       popular: 'HOT! 요즘 뜨는 영화',
       upcoming: 'NEW! 새로 나온 영화',
       top_rated: '높은 평점 영화',
-      personalized: '당신이 좋아할 만한 추천 영화',
+      personalized: '당신을 위한 추천 영화',
       'genre-35': '빵 터지는 무비관! 배꼽 탈출 코미디',
       'genre-28': '근손실 방지는 여기서! 맥박 요동치는 액션',
       'genre-10749': '다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스',
