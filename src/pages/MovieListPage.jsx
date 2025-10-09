@@ -13,6 +13,7 @@ export default function MovieListPage() {
       popular: 'HOT! 요즘 뜨는 영화',
       upcoming: 'NEW! 새로 나온 영화',
       top_rated: '높은 평점 영화',
+      personalized: '당신이 좋아할 만한 추천 영화',
       'genre-35': '빵 터지는 무비관! 배꼽 탈출 코미디',
       'genre-28': '근손실 방지는 여기서! 맥박 요동치는 액션',
       'genre-10749': '다 죽은 연애 세포 기상! 혈당 수치 초과 로맨스',
@@ -34,6 +35,20 @@ export default function MovieListPage() {
           ]);
           if (!mounted) return;
           setItems(take30([...p1.data.results, ...p2.data.results]));
+        } else if (type === 'personalized') {
+          // 개인 맞춤형 추천 로직
+          const [trending, highRated, popularRated] = await Promise.all([
+            axios.get(`https://api.themoviedb.org/3/trending/movie/week?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`),
+            axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&vote_average.gte=7.0&primary_release_date.gte=2020-01-01&sort_by=vote_average.desc`),
+            axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&vote_average.gte=6.5&vote_count.gte=100&sort_by=popularity.desc`)
+          ]);
+          
+          const allPersonalized = [...trending.data.results, ...highRated.data.results, ...popularRated.data.results];
+          const uniquePersonalized = allPersonalized.filter((movie, index, self) => 
+            index === self.findIndex(m => m.id === movie.id) && movie.poster_path
+          );
+          if (!mounted) return;
+          setItems(take30(uniquePersonalized));
         } else if (type?.startsWith('genre-')) {
           const genreId = type.split('-')[1];
           const base = `https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&with_genres=${genreId}`;

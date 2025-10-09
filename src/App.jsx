@@ -41,6 +41,7 @@ export default function App() {
   const [actionMovies, setActionMovies] = useState([]);
   const [romanceMovies, setRomanceMovies] = useState([]);
   const [trailerMovies, setTrailerMovies] = useState([]);
+  const [personalizedMovies, setPersonalizedMovies] = useState([]);
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState('multi');
 
@@ -108,6 +109,29 @@ export default function App() {
         setRomanceMovies(romance.data.results.filter(movie => movie.poster_path))
         setTrailerMovies(trailerMovies)
 
+        // 개인 맞춤형 추천 영화 (여러 조건 조합)
+        const personalizedRecommendations = await Promise.all([
+          // 트렌딩 영화
+          axios.get(`https://api.themoviedb.org/3/trending/movie/week?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`),
+          // 높은 평점 + 최신 영화
+          axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&vote_average.gte=7.0&primary_release_date.gte=2020-01-01&sort_by=vote_average.desc`),
+          // 인기 + 높은 평점 조합
+          axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&vote_average.gte=6.5&vote_count.gte=100&sort_by=popularity.desc`)
+        ]);
+
+        // 각 카테고리에서 영화 추출하고 중복 제거
+        const trendingMovies = personalizedRecommendations[0].data.results.slice(0, 6);
+        const highRatedRecent = personalizedRecommendations[1].data.results.slice(0, 6);
+        const popularHighRated = personalizedRecommendations[2].data.results.slice(0, 8);
+
+        // 개인 맞춤형 추천 리스트 생성 (중복 제거)
+        const allPersonalized = [...trendingMovies, ...highRatedRecent, ...popularHighRated];
+        const uniquePersonalized = allPersonalized.filter((movie, index, self) => 
+          index === self.findIndex(m => m.id === movie.id) && movie.poster_path
+        ).slice(0, 20);
+
+        setPersonalizedMovies(uniquePersonalized);
+
       }
       catch (err) {
         console.error('로딩실패', err);
@@ -130,7 +154,7 @@ export default function App() {
    * 
   */
 
-  const isLoading = nowPlaying.length === 0 && popular.length === 0 && upComing.length === 0 && recommend.length === 0 && actionMovies.length === 0 && romanceMovies.length === 0 && comedyMovies.length === 0;
+  const isLoading = nowPlaying.length === 0 && popular.length === 0 && upComing.length === 0 && recommend.length === 0 && actionMovies.length === 0 && romanceMovies.length === 0 && comedyMovies.length === 0 && personalizedMovies.length === 0;
 
   if (isLoading) {
     return (
@@ -152,6 +176,7 @@ export default function App() {
       
       <Section title="HOT! 요즘 뜨는 영화" items={popular} m_v={2} p_v={6} titleTo="/movies/popular" />
       <Section title="NEW! 새로 나온 영화" items={upComing} m_v={2} p_v={6} titleTo="/movies/upcoming" />
+      <Section title="당신이 좋아할 만한 추천 영화" items={personalizedMovies} m_v={2} p_v={6} titleTo="/movies/personalized" />
       <Section title="높은 평점 영화" items={recommend} m_v={2} p_v={6} titleTo="/movies/top_rated" />
       <Section title="빵 터지는 무비관! 배꼽 탈출 코미디" items={comedyMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-35" />
       <Section title="근손실 방지는 여기서! 맥박 요동치는 액션" items={actionMovies} m_v={2} p_v={6} orientation="horizontal" titleTo="/movies/genre-28" />
