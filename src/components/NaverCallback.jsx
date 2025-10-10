@@ -42,7 +42,10 @@ const NaverCallback = () => {
       
       localStorage.setItem('naver_token', 'temp_naver_token');
       localStorage.setItem('user_info', JSON.stringify(tempUserInfo));
-      
+            
+      // 로그인 상태 변경 이벤트 발생
+      window.dispatchEvent(new CustomEvent('loginStatusChanged'));
+
       ('네이버 로그인 성공');
       navigate('/');
     } catch (error) {
@@ -90,7 +93,10 @@ const NaverCallback = () => {
           
           localStorage.setItem('naver_token', naverLogin.accessToken.accessToken);
           localStorage.setItem('user_info', JSON.stringify(userInfo));
-          
+                    
+          // 로그인 상태 변경 이벤트 발생
+          window.dispatchEvent(new CustomEvent('loginStatusChanged'));
+
           ('네이버 로그인 성공:', userInfo);
           navigate('/');
         } else {

@@ -3,7 +3,6 @@ import api from "./api/axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from "react-router";
 import {
-  faHouse,
   faStar,
   faMagnifyingGlass,
   faFilm,
@@ -280,31 +279,31 @@ function VideoHero() {
     {
       title: "케이팝 데몬 헌터스 (2025)",
       searchTitle: "케이팝 데몬 헌터스",
-      buttonText: "팝콘플레이 시작하기",
+      buttonText: "재생하기",
       image: "image1.svg"
     },
     {
       title: "사마귀",
       searchTitle: "사마귀",
-      buttonText: "팝콘플레이 시작하기",
+      buttonText: "재생하기",
       image: "image2.svg"
     },
     {
       title: "컨저링:마지막의식",
       searchTitle: "컨저링 마지막 의식",
-      buttonText: "팝콘플레이 시작하기",
+      buttonText: "재생하기",
       image: "image3.svg"
     },
     {
       title: "노바디2",
       searchTitle: "노바디2",
-      buttonText: "팝콘플레이 시작하기",
+      buttonText: "재생하기",
       image: "image4.svg"
     },
     {
       title: "아바타: 물의 길 (2022)",
       searchTitle: "Avatar The Way of Water",
-      buttonText: "팝콘플레이 시작하기",
+      buttonText: "재생하기",
       image: "image5.svg"
     },
   ];

@@ -43,7 +43,10 @@ const KakaoCallback = () => {
         // 토큰 저장
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('user_info', JSON.stringify(data.user));
-        
+                
+        // 로그인 상태 변경 이벤트 발생
+        window.dispatchEvent(new CustomEvent('loginStatusChanged'));
+
         ('카카오 로그인 성공:', data);
         navigate('/');
       } else {
