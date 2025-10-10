@@ -44,7 +44,7 @@ const KakaoCallback = () => {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('user_info', JSON.stringify(data.user));
         
-        console.log('카카오 로그인 성공:', data);
+        ('카카오 로그인 성공:', data);
         navigate('/');
       } else {
         throw new Error('로그인 처리 중 오류 발생');

@@ -23,7 +23,7 @@ const SocialLogin = () => {
     // 카카오 로그아웃
     if (window.Kakao && window.Kakao.Auth) {
       window.Kakao.Auth.logout(() => {
-        console.log('카카오 로그아웃 완료');
+        ('카카오 로그아웃 완료');
       });
     }
 

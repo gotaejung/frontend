@@ -147,7 +147,7 @@ export default function MyPage() {
   };
 
   const handleItemClick = (categoryId, itemId) => {
-    console.log(`${categoryId} - ${itemId} 클릭됨`);
+    (`${categoryId} - ${itemId} 클릭됨`);
     // 여기에 각 항목별 상세 페이지 로직 추가 가능
   };
 

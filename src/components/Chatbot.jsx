@@ -23,8 +23,8 @@ export default function ChatBot() {
     setIsLoading(true);
 
     try {
-      console.log("챗봇 메시지 전송:", messageToSend);
-      console.log("API 엔드포인트:", chatApi.defaults.baseURL);
+      ("챗봇 메시지 전송:", messageToSend);
+      ("API 엔드포인트:", chatApi.defaults.baseURL);
 
       const response = await chatApi.post("/chat", { message: messageToSend });
       const botMessage = {

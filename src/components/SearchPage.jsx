@@ -382,7 +382,7 @@ export default function SearchPage() {
           <h1 className="text-3xl font-bold mb-6 text-amber-100">고급 검색</h1>
 
           {/* 검색 타입 선택 */}
-          <div className="grid grid-cols-3 md:grid-cols-7 gap-2 mb-6">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
             {searchTypes.map((type) => (
               <button
                 key={type.value}
@@ -402,12 +402,12 @@ export default function SearchPage() {
           </div>
 
           {/* 검색 입력 */}
-          <div className="relative max-w-2xl mb-6">
+          <div className="relative mb-6">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`${searchTypes.find(t => t.value === searchType)?.label} 검색...`}
+              placeholder={`${searchTypes.find(t => t.value === searchType)?.label} ...`}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 transition-colors"
             />
             {searchQuery && (

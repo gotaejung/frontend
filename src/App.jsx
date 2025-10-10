@@ -57,7 +57,7 @@ export default function App() {
   useEffect(() => {
     async function loadNowPlaying() {
       try {
-        console.log('API 키 확인:', import.meta.env.VITE_TMDB_API_KEY);
+        ('API 키 확인:', import.meta.env.VITE_TMDB_API_KEY);
 
         const np = await api.get(`now_playing?language=ko-KR`);
         const po = await api.get(`popular?language=ko-KR`);
@@ -146,7 +146,7 @@ export default function App() {
     }
     loadNowPlaying();
   }, [])
-  //console.log(nowPlaying);
+  //(nowPlaying);
 
   /** 
    * 
@@ -164,7 +164,7 @@ export default function App() {
     )
   }
   return (
-    <main className="pt-16 bg-black text-white">
+    <main className="pt-16 bg-ㅎ text-white">
       <VideoHero />
       {/* 검색 타입 그리드 + 검색 인풋 */}
       <SearchHeader />

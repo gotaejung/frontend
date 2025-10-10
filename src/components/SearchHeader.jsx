@@ -47,7 +47,7 @@ export default function SearchHeader({ selectedType = 'multi', onTypeChange }) {
         ))}
       </div>
 
-      <div className="relative max-w-3xl mx-auto">
+      <div className="relative mx-auto">
         <input
           type="text"
           placeholder="영화 검색..."

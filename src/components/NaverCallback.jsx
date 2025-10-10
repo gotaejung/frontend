@@ -30,7 +30,7 @@ const NaverCallback = () => {
   const handleNaverCallback = async (code, state) => {
     try {
       // 실제 환경에서는 백엔드 API를 호출해야 합니다
-      console.log('네이버 인증 코드:', code);
+      ('네이버 인증 코드:', code);
       
       // 임시로 로그인 성공 처리
       const tempUserInfo = {
@@ -43,7 +43,7 @@ const NaverCallback = () => {
       localStorage.setItem('naver_token', 'temp_naver_token');
       localStorage.setItem('user_info', JSON.stringify(tempUserInfo));
       
-      console.log('네이버 로그인 성공');
+      ('네이버 로그인 성공');
       navigate('/');
     } catch (error) {
       console.error('네이버 콜백 처리 오류:', error);
@@ -91,7 +91,7 @@ const NaverCallback = () => {
           localStorage.setItem('naver_token', naverLogin.accessToken.accessToken);
           localStorage.setItem('user_info', JSON.stringify(userInfo));
           
-          console.log('네이버 로그인 성공:', userInfo);
+          ('네이버 로그인 성공:', userInfo);
           navigate('/');
         } else {
           console.error('네이버 로그인 실패');

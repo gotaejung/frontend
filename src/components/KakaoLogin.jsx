@@ -21,12 +21,12 @@ const KakaoLogin = () => {
     if (window.Kakao) {
       window.Kakao.Auth.login({
         success: (response) => {
-          console.log('카카오 로그인 성공:', response);
+          ('카카오 로그인 성공:', response);
           // 사용자 정보 요청
           window.Kakao.API.request({
             url: '/v2/user/me',
             success: (res) => {
-              console.log('사용자 정보:', res);
+              ('사용자 정보:', res);
               // 로그인 성공 후 처리
               localStorage.setItem('kakao_token', response.access_token);
               localStorage.setItem('user_info', JSON.stringify(res));
