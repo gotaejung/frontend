@@ -53,10 +53,10 @@ export default function LoginPage() {
 
           {/* 안내 텍스트 */}
           <div className="mt-8 text-center">
-            <p className="text-gray-400 text-sm">
+            {/* <p className="text-gray-400 text-sm">
               로그인하시면 개인화된 영화 추천과 <br />
               즐겨찾기 기능을 이용하실 수 있습니다.
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
