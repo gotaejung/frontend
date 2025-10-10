@@ -1,6 +1,6 @@
 import api from "../api/axios";
 import { useParams, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faDownload,
@@ -18,6 +18,12 @@ export default function MovieDetail() {
   const [movie, setMovie] = useState(null)
   const [credits, setCredits] = useState(null)
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
+  // ▼ 포스터 높이에 맞춰 개요 영역을 제한하기 위한 참조/상태
+  const posterBoxRef = useRef(null);
+  const rightTopRef = useRef(null); // 개요 위의 우측 영역 전체
+  const overviewRef = useRef(null);
+  const [overviewMaxPx, setOverviewMaxPx] = useState(null);
+  const [overviewHasOverflow, setOverviewHasOverflow] = useState(false);
 
   // ▼ 만료 아이콘 토글 상태 추가
   const [showExpiry, setShowExpiry] = useState(false);
@@ -67,7 +73,35 @@ export default function MovieDetail() {
     setShowExpiry(false);
 
     getMovieDetails();
-  }, [id])/* 의존성배열의 값이 바꿀때  실행 */
+  }, [id]);/* 의존성배열의 값이 바꿀때  실행 */
+
+  // ▼ 데스크톱 개요 영역 높이 계산 (포스터 높이 이하로)
+  useEffect(() => {
+    const recalc = () => {
+      const posterH = posterBoxRef.current ? posterBoxRef.current.offsetHeight : 0;
+      const topH = rightTopRef.current ? rightTopRef.current.offsetHeight : 0;
+      // 여백 보정값 (패딩/마진 약간 고려)
+      const fudge = 12;
+      const available = Math.max(0, posterH - topH - fudge);
+      if (!isNaN(available) && available > 0) {
+        setOverviewMaxPx(available);
+        if (overviewRef.current) {
+          const scrollH = overviewRef.current.scrollHeight || 0;
+          setOverviewHasOverflow(scrollH > available + 4);
+        } else {
+          setOverviewHasOverflow(false);
+        }
+      } else {
+        setOverviewMaxPx(null);
+        setOverviewHasOverflow(false);
+      }
+    };
+
+    // 초기 계산 + 리사이즈 대응
+    recalc();
+    window.addEventListener('resize', recalc);
+    return () => window.removeEventListener('resize', recalc);
+  }, [movie, credits, isOverviewExpanded]);
 
   // ▼ 추가: 하단 영역 토글/데이터 로드 (페이지 이동 없음)
   const openSimilar = async () => {
@@ -180,7 +214,7 @@ export default function MovieDetail() {
   // ▼ 추가: 데이터 로딩 가드 (초기 null 접근 방지)
   if (!movie || !credits) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         불러오는 중...
       </div>
     );
@@ -190,27 +224,27 @@ export default function MovieDetail() {
   return (
     <>
       {/* Desktop Layout (768px+) */}
-      <div className="hidden md:block min-h-screen bg-gray-900 text-white" style={{ fontFamily: 'Pretendard, sans-serif' }}>
+      <div className="hidden md:block min-h-screen bg-black text-white" style={{ fontFamily: 'Pretendard, sans-serif' }}>
         <div className="container mx-auto px-4 py-20">
-          <div className="flex gap-8 h-full">
+          <div className="flex gap-8 h-full items-stretch">
             {/* Left Side - Movie Poster */}
             <div className="w-1/3 h-full">
-              <div className="bg-gray-100 p-8 rounded-lg h-full flex items-center">
+              <div ref={posterBoxRef} className="rounded-lg h-full overflow-hidden">
                 <img
                   src={movie.poster_path
                     ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
                     : '/no-poster.png'}
                    alt={movie.title}
-                   className="w-full h-full object-cover rounded-lg shadow-lg max-h-[600px]"
+                   className="block w-full h-full object-cover shadow-lg max-h-[600px]"
                 />
               </div>
             </div>
 
             {/* Right Side - Movie Info */}
-            <div className="w-2/3">
-              <div className="bg-gray-900 text-white">
+            <div className="w-2/3 h-full">
+              <div className="bg-black text-white h-full flex flex-col">
                 {/* Movie Title and Rating */}
-                <div className="mb-6">
+                <div ref={rightTopRef} className="mb-6">
                   <h1 className="text-3xl font-bold mb-3 text-white flex items-center gap-2">
                     {movie.title}
 
@@ -333,11 +367,31 @@ export default function MovieDetail() {
                   </div>
                 </div>
 
-                {/* Movie Overview */}
-                <div className="mb-0">
-                  <p className="text-gray-300 leading-relaxed">
+                {/* Movie Overview (포스터 높이 이하, 더보기) */}
+                <div className="mb-0 relative">
+                  <div
+                    ref={overviewRef}
+                    className="text-gray-300 leading-relaxed"
+                    style={!isOverviewExpanded && overviewMaxPx ? { maxHeight: `${overviewMaxPx}px`, overflow: 'hidden' } : undefined}
+                  >
                     {movie.overview}
-                  </p>
+                  </div>
+                  {/* 페이드 오버레이 */}
+                  {!isOverviewExpanded && overviewHasOverflow && (
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent" />
+                  )}
+                  {/* 더보기/접기 버튼 */}
+                  {overviewHasOverflow && (
+                    <div className="mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsOverviewExpanded(v => !v)}
+                        className="text-gray-400 hover:text-white text-sm"
+                      >
+                        {isOverviewExpanded ? '접기' : '더보기'}
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* 리뷰 섹션은 아래 전체 너비로 이동했습니다 */}
@@ -347,28 +401,33 @@ export default function MovieDetail() {
 
           {/* Desktop: Full-width Reviews (전체 너비) */}
           <div className="mt-12">
-            <div className="border-t border-gray-600 pt-6">
-              {/* 헤더: 리뷰 | 유사한 영화 추천 */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={openReviews}
-                    className={`font-bold text-lg ${!showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                  >
-                    리뷰
-                  </button>
-                  <span className="text-blue-400">({reviewsTotal})</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={openSimilar}
-                  className={`font-bold text-lg ${showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                >
-                  유사한 영화 추천
-                </button>
-              </div>
+            {/* 헤더: 리뷰 | 유사한 영화 추천 (반반, 센터 정렬, 전체 영역 클릭) */}
+            <div className="grid grid-cols-2 mb-4">
+              <button
+                type="button"
+                onClick={openReviews}
+                aria-selected={!showSimilar}
+                className={`w-full flex items-center justify-center gap-2 py-2 cursor-pointer select-none ${!showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <span className="font-bold text-lg">리뷰</span>
+                <span className="text-blue-400">({reviewsTotal})</span>
+              </button>
+              <button
+                type="button"
+                onClick={openSimilar}
+                aria-selected={showSimilar}
+                className={`w-full flex items-center justify-center py-2 cursor-pointer select-none ${showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <span className="font-bold text-lg">유사한 영화 추천</span>
+              </button>
+            </div>
 
+            {/* 구분선: 헤더 아래 (선택된 탭만 표시) */}
+            <div className="grid grid-cols-2">
+              <div className={!showSimilar ? 'border-t border-gray-600' : ''}></div>
+              <div className={showSimilar ? 'border-t border-gray-600' : ''}></div>
+            </div>
+            <div className="pt-6">
               {/* 내용: 유사영화 or TMDB 리뷰 목록 */}
               {showSimilar ? (
                 <div className="mb-6">
@@ -379,7 +438,7 @@ export default function MovieDetail() {
                       {similar.slice(0, 12).map(s => (
                         <div
                           key={s.id}
-                          className="group rounded-md overflow-hidden bg-gray-900/60 border border-gray-700 hover:border-gray-600 transition-colors"
+                          className="group rounded-md overflow-hidden bg-black border border-gray-700 hover:border-gray-600 transition-colors"
                           title={s.title}
                         >
                           <div className="aspect-[2/3] bg-gray-700 overflow-hidden">
@@ -411,19 +470,16 @@ export default function MovieDetail() {
                 </div>
               ) : (
                 <>
+                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                    <p className="text-gray-300 text-sm text-center">
+                      리뷰를 작성하려면 영화를 충분히 감상해주세요
+                    </p>
+                    <p className="text-gray-400 text-xs text-center mt-1">
+                      작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
+                    </p>
+                  </div>
                   {loadingReviews && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
                   {reviewsError && <div className="text-red-400 text-center py-6">{reviewsError}</div>}
-                  {!loadingReviews && !reviewsError && reviews.length === 0 && (
-                    <div className="bg-gray-700 rounded-lg p-4 mb-6">
-                      <p className="text-gray-300 text-sm text-center">
-                        리뷰를 작성하려면 영화를 충분히 감상해주세요
-                      </p>
-                      <p className="text-gray-400 text-xs text-center mt-1">
-                        작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
-                      </p>
-                    </div>
-                  )}
-
                   {!loadingReviews && !reviewsError && reviews.length > 0 && (
                     <div className="space-y-6">
                       {reviews.map(r => {
@@ -512,7 +568,7 @@ export default function MovieDetail() {
         </div>
 
         {/* Mobile Content */}
-        <div className="bg-gray-900 text-white">
+        <div className="bg-black text-white">
           {/* Title and Meta Info */}
           <div className="px-4 pt-6 pb-4">
             <h1 className="text-2xl font-bold mb-3 text-white leading-tight flex items-center gap-2">
@@ -643,27 +699,32 @@ export default function MovieDetail() {
           </div>
 
           {/* Reviews Section (모바일도 동일 토글) */}
-          <div className="px-4 border-t border-gray-600 pt-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={openReviews}
-                  className={`font-bold text-lg ${!showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                >
-                  리뷰
-                </button>
+          <div className="px-4 pt-6">
+            <div className="grid grid-cols-2 mb-4">
+              <button
+                type="button"
+                onClick={openReviews}
+                aria-selected={!showSimilar}
+                className={`w-full flex items-center justify-center gap-2 py-2 cursor-pointer select-none ${!showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <span className="font-bold text-lg">리뷰</span>
                 <span className="text-blue-400 text-sm">({reviewsTotal})</span>
-              </div>
+              </button>
               <button
                 type="button"
                 onClick={openSimilar}
-                className={`font-bold text-lg ${showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                aria-selected={showSimilar}
+                className={`w-full flex items-center justify-center py-2 cursor-pointer select-none ${showSimilar ? 'text-white' : 'text-gray-400 hover:text-white'}`}
               >
-                유사한 영화 추천
+                <span className="font-bold text-lg">유사한 영화 추천</span>
               </button>
             </div>
 
+            <div className="grid grid-cols-2">
+              <div className={!showSimilar ? 'border-t border-gray-600' : ''}></div>
+              <div className={showSimilar ? 'border-t border-gray-600' : ''}></div>
+            </div>
+            <div className="pt-6">
             {showSimilar ? (
               <div className="mb-6">
                 {loadingSimilar && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
@@ -673,7 +734,7 @@ export default function MovieDetail() {
                     {similar.slice(0, 9).map(s => (
                       <div
                         key={s.id}
-                        className="group rounded-md overflow-hidden bg-gray-900/60 border border-gray-700 hover:border-gray-600 transition-colors"
+                        className="group rounded-md overflow-hidden bg-black/60 border border-gray-700 hover:border-gray-600 transition-colors"
                         title={s.title}
                       >
                         <div className="aspect-[2/3] bg-gray-700 overflow-hidden">
@@ -705,18 +766,16 @@ export default function MovieDetail() {
               </div>
             ) : (
               <>
+                <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                  <p className="text-gray-300 text-sm text-center">
+                    리뷰를 작성하려면 영화를 충분히 감상해주세요
+                  </p>
+                  <p className="text-gray-400 text-xs text-center mt-1">
+                    작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
+                  </p>
+                </div>
                 {loadingReviews && <div className="text-gray-300 text-center py-6">불러오는 중...</div>}
                 {reviewsError && <div className="text-red-400 text-center py-6">{reviewsError}</div>}
-                {!loadingReviews && !reviewsError && reviews.length === 0 && (
-                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
-                    <p className="text-gray-300 text-sm text-center">
-                      리뷰를 작성하려면 영화를 충분히 감상해주세요
-                    </p>
-                    <p className="text-gray-400 text-xs text-center mt-1">
-                      작성하신 소중한 리뷰는 다른 사용자에게 큰 도움이 됩니다.
-                    </p>
-                  </div>
-                )}
 
                 {!loadingReviews && !reviewsError && reviews.length > 0 && (
                   <div className="space-y-6">
@@ -786,6 +845,7 @@ export default function MovieDetail() {
                 <div className="pb-20"></div>
               </>
             )}
+            </div>
           </div>
         </div>
       </div>
@@ -794,7 +854,7 @@ export default function MovieDetail() {
       {isCastOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" aria-modal="true" role="dialog">
           <div className="absolute inset-0 bg-black/60" onClick={() => setIsCastOpen(false)} />
-          <div className="relative bg-gray-900 text-white w-[92vw] max-w-3xl rounded-lg shadow-xl">
+          <div className="relative bg-black text-white w-[92vw] max-w-3xl rounded-lg shadow-xl">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-lg font-bold">
                 출연진 전체 <span className="text-blue-400">({castList.length})</span>
@@ -811,7 +871,7 @@ export default function MovieDetail() {
             <div className="p-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {castList.map(c => (
-                  <div key={c.cast_id ?? `${c.id}-${c.order}`} className="flex items-center gap-3 bg-gray-900/50 border border-gray-700 rounded-md p-3">
+                  <div key={c.cast_id ?? `${c.id}-${c.order}`} className="flex items-center gap-3 bg-black/50 border border-gray-700 rounded-md p-3">
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center flex-shrink-0">
                       {getProfileUrl(c.profile_path) ? (
                         <img
