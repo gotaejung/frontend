@@ -24,6 +24,12 @@ export default function MovieDetail() {
   const overviewRef = useRef(null);
   const [overviewMaxPx, setOverviewMaxPx] = useState(null);
   const [overviewHasOverflow, setOverviewHasOverflow] = useState(false);
+  
+  // 유사 영화 카드 클릭 시 상세로 이동
+  const openMovieDetail = (movieId) => {
+    if (!movieId) return;
+    navigate(`/movie/${movieId}`);
+  };
 
   // ▼ 만료 아이콘 토글 상태 추가
   const [showExpiry, setShowExpiry] = useState(false);
@@ -102,6 +108,11 @@ export default function MovieDetail() {
     window.addEventListener('resize', recalc);
     return () => window.removeEventListener('resize', recalc);
   }, [movie, credits, isOverviewExpanded]);
+
+  // 다른 영화로 이동 시 상단으로 스크롤
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [id]);
 
   // ▼ 추가: 하단 영역 토글/데이터 로드 (페이지 이동 없음)
   const openSimilar = async () => {
@@ -436,11 +447,15 @@ export default function MovieDetail() {
                   {!loadingSimilar && !similarError && (
                     <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
                       {similar.slice(0, 12).map(s => (
-                        <div
-                          key={s.id}
-                          className="group rounded-md overflow-hidden bg-black border border-gray-700 hover:border-gray-600 transition-colors"
-                          title={s.title}
-                        >
+                          <div
+                            key={s.id}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => openMovieDetail(s.id)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMovieDetail(s.id); } }}
+                            className="group rounded-md overflow-hidden bg-black border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
+                            title={s.title}
+                          >
                           <div className="aspect-[2/3] bg-gray-700 overflow-hidden">
                             <img
                               src={s.poster_path ? `https://image.tmdb.org/t/p/w342${s.poster_path}` : '/no-poster.png'}
@@ -732,11 +747,15 @@ export default function MovieDetail() {
                 {!loadingSimilar && !similarError && (
                   <div className="grid grid-cols-2 gap-3">
                     {similar.slice(0, 9).map(s => (
-                      <div
-                        key={s.id}
-                        className="group rounded-md overflow-hidden bg-black/60 border border-gray-700 hover:border-gray-600 transition-colors"
-                        title={s.title}
-                      >
+                        <div
+                          key={s.id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => openMovieDetail(s.id)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMovieDetail(s.id); } }}
+                          className="group rounded-md overflow-hidden bg-black/60 border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
+                          title={s.title}
+                        >
                         <div className="aspect-[2/3] bg-gray-700 overflow-hidden">
                           <img
                             src={s.poster_path ? `https://image.tmdb.org/t/p/w342${s.poster_path}` : '/no-poster.png'}
