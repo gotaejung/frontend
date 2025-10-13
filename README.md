@@ -1,10 +1,10 @@
 # POPCORN PLAY 🎬
 
-> Netflix 스타일의 영화 정보 웹 애플리케이션
+> 영화 스트리밍 서비스 웹 애플리케이션
 
 ## 📋 프로젝트 개요
 
-POPCORN PLAY는 **The Movie Database (TMDB) API**를 활용하여 최신 영화 정보를 제공하는 반응형 웹 애플리케이션입니다. Netflix와 유사한 UI/UX를 제공하며, 사용자들이 현재 상영작, 인기작, 상영 예정작을 쉽게 탐색할 수 있습니다.
+POPCORN PLAY는 **The Movie Database (TMDB) API**를 활용하여 최신 영화 정보를 제공하는 반응형 웹 애플리케이션입니다. 사용자들이 현재 상영작, 인기작, 상영 예정작을 쉽게 탐색할 수 있습니다.
 
 ## 🔗 링크
 
@@ -31,7 +31,7 @@ POPCORN PLAY는 **The Movie Database (TMDB) API**를 활용하여 최신 영화 
 
 ### 📱 사용자 경험
 - **반응형 디자인**: 모바일, 태블릿, 데스크톱 최적화
-- **Netflix 스타일 UI**: 어두운 테마와 노란색 포인트 컬러
+- **트렌디한 스타일 UI**: 어두운 테마와 레드 포인트 컬러
 - **부드러운 애니메이션**: 호버 효과 및 트랜지션
 - **비디오 히어로**: 메인 페이지 배경 비디오
 
@@ -97,17 +97,31 @@ npm run preview
 ## 📁 프로젝트 구조
 
 ```
-src/
-├── api/
-│   └── axios.js          # API 설정 (TMDB, 챗봇)
-├── components/
-│   ├── Card.jsx          # 영화 카드 컴포넌트
-│   ├── Chatbot.jsx       # 챗봇 UI 컴포넌트
-│   ├── MovieDetail.jsx   # 영화 상세 페이지
-│   └── Section.jsx       # 영화 섹션 컴포넌트
-├── App.jsx               # 메인 앱 컴포넌트
-├── main.jsx              # React 엔트리포인트
-└── index.css             # TailwindCSS 스타일
+📦src
+ ┣ 📂api
+ ┃ ┣ 📜axios.js                # API 설정 (TMDB, 챗봇)
+ ┃ ┗ 📜config.js
+ ┣ 📂components
+ ┃ ┣ 📜Card.jsx                # 영화 카드 컴포넌트
+ ┃ ┣ 📜Chatbot.jsx             # 챗봇 UI 컴포넌트
+ ┃ ┣ 📜KakaoCallback.jsx
+ ┃ ┣ 📜KakaoLogin.jsx
+ ┃ ┣ 📜LoginPage.jsx
+ ┃ ┣ 📜MovieDetail.jsx         # 영화 상세 페이지
+ ┃ ┣ 📜MyPage.jsx
+ ┃ ┣ 📜NaverCallback.jsx
+ ┃ ┣ 📜NaverLogin.jsx
+ ┃ ┣ 📜SearchHeader.jsx
+ ┃ ┣ 📜SearchPage.jsx
+ ┃ ┣ 📜Section.jsx             # 영화 섹션 컴포넌트
+ ┃ ┗ 📜SocialLogin.jsx
+ ┣ 📂pages
+ ┃ ┣ 📜MovieListPage.jsx
+ ┃ ┗ 📜TrailerListPage.jsx
+ ┣ 📜App.jsx                   # 메인 앱 컴포넌트
+ ┣ 📜index.css                 # TailwindCSS 스타일
+ ┣ 📜main.jsx                  # React 엔트리포인트
+ ┗ 📜RootLayout.jsx
 ```
 
 ## 🎯 주요 컴포넌트 설명
@@ -157,7 +171,7 @@ POST /chat
 ## 🎨 디자인 특징
 
 - **다크 테마**: 영화관 분위기의 검은색 배경
-- **골드 액센트**: 노란색 포인트 컬러로 고급스러운 느낌
+- **아이보리 액센트**: 아이보리색 포인트 컬러로 고급스러운 느낌
 - **카드 기반 레이아웃**: 영화 정보를 카드 형태로 구성
 - **호버 이펙트**: 마우스 오버 시 스케일 애니메이션
 - **반응형 그리드**: 화면 크기에 따른 적응형 레이아웃
@@ -228,6 +242,23 @@ git commit -m "Style: 코드 포맷팅 및 린트 오류 수정"
 
 프로젝트와 관련된 문의사항이 있으시면 언제든지 연락해주세요.
 
+
+## 개발기간
+9월 17일 - 10월 10일 (3주 가량)
+
+
+## 구성원
+고태정 - gotaejung
+민겨레 - minsunduck
+김지연 - kimjiyeon970608
+옥다희 - dahee1230
+
+
+## 역할분담
+고태정 : 서비스 조사 및 기획, 영상 스토리보드, 컴포넌트 제작-헤더, 푸터, 챗봇 로그인 기능, 파이썬 API 서버 구축, API 연결 및 배포
+민겨레 : 서비스 조사 및 기획, 화면 디자인 시안-메인, 상세페이지, 컴포넌트 제작-상세페이지, 장르별 페이지, 파이썬 API 서버 구축, API 연결 및 배포
+김지연 : 서비스 조사 및기획, 로고 디자인, 영상 제작 및 편집, 챗봇 대화 시나리오 작성, 파이썬 API 서버 구축, 테스트 및 디버깅, 스타일 가이드 작성
+옥다희 : 서비스 조사 및 기획, 컴포넌트 제작-홈화면, 영상 제작 및 편집, 파이썬 API 서버 구축, 테스트 및 디버깅
 ---
 
 **Popcorn Play** - 영화를 사랑하는 모든 이들을 위한 플랫폼 🎬✨
